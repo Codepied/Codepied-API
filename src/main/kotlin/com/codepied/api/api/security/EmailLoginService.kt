@@ -1,15 +1,15 @@
 package com.codepied.api.api.security
 
-import com.codepied.api.endpoint.dto.EmailUserLogin
-import org.springframework.stereotype.Service
+import com.codepied.api.endpoint.dto.EmailUserCreate
+import com.codepied.api.user.dto.EmailUserLogin
 
+/**
+ * Email user login service interface
+ *
+ * @author Aivyss
+ * @since 2022/12/17
+ */
 interface EmailLoginService {
     fun login(request: EmailUserLogin): LoginInfo
-}
-
-@Service
-class EmailLoginServiceImpl: EmailLoginService {
-    override fun login(request: EmailUserLogin): LoginInfo {
-        TODO("Not yet implemented")
-    }
+    fun signup(request: EmailUserCreate): LoginInfo
 }

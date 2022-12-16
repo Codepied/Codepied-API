@@ -2,7 +2,7 @@ package com.codepied.api.user.endpoint
 
 import com.codepied.api.api.http.SuccessResponse
 import com.codepied.api.api.security.*
-import com.codepied.api.endpoint.dto.EmailUserLogin
+import com.codepied.api.user.dto.EmailUserLogin
 import com.codepied.api.user.dto.SocialUserLogin
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
