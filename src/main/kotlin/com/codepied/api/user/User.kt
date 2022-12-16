@@ -14,15 +14,6 @@ class User(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_KEY")
     val id: Long,
-
-    @Column(name = "EMAIL", nullable = false, unique = true)
-    val email: String,
-
-    @Column(name = "PASSWORD", nullable = false)
-    val password: String,
-
-    @Column(name = "USERNAME", nullable = false)
-    var username: String,
 ) {
     @OneToMany(mappedBy = "user", cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     val roles: MutableList<UserRole> = mutableListOf()
@@ -39,12 +30,9 @@ class User(
 }
 
 object UserFactory {
-    fun create(email: String, password: String, username: String, roles: List<Role>): User {
+    fun create(email: String, roles: List<Role>): User {
         val user = User(
             id = 0L,
-            email = email,
-            password = password,
-            username = username,
         )
 
         return roles.forEach { user.addRole(it) }.let { user }
