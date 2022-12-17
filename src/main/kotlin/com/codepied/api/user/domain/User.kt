@@ -68,10 +68,6 @@ object UserFactory {
 }
 
 interface UserRepository : JpaRepository<User, Long>, UserQueryRepository {
-    fun existsByEmailAndDeletedFalse(email: String): Boolean
-
-    @EntityGraph(attributePaths = ["roleTypes"])
-    fun findByEmailAndDeletedFalse(email: String): User?
 }
 
 fun UserRepository.getUserById(id: Long): User {
