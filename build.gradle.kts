@@ -8,7 +8,6 @@ plugins {
     kotlin("plugin.jpa") version "1.6.21"
     kotlin("plugin.noarg") version "1.6.21"
     kotlin("kapt") version "1.6.21"
-
 }
 
 group = "com.codepied"
