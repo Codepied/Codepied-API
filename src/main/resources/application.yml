@@ -20,4 +20,10 @@ jwt:
     refreshTokenSecret: "1892ka09vm/$@!adsf@A32v"
     accessTokenLifetime: 1800000 # 30 min
     refreshTokenLifetime: 10800000 # 3 hour
+
+config:
+    async:
+        asyncPoolMinCapacity: 10
+        asyncPoolMaxCapacity: 50
+        asyncPoolQueueCapacity: 50
     
