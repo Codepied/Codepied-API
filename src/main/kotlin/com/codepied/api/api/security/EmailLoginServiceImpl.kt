@@ -2,19 +2,19 @@ package com.codepied.api.api.security
 
 import com.codepied.api.api.exception.ErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
+import com.codepied.api.api.mailing.application.AwsMailingService
+import com.codepied.api.api.mailing.dto.EmailSignupAuthorizationValues
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.domain.UserFactory
 import com.codepied.api.domain.UserRepository
 import com.codepied.api.endpoint.dto.EmailUserCreate
+import com.codepied.api.user.domain.*
 import com.codepied.api.user.dto.EmailUserLogin
-import com.codepied.api.user.domain.UserCredentialFactory
-import com.codepied.api.user.domain.UserCredentialRepository
-import com.codepied.api.user.domain.UserDetailsFactory
-import com.codepied.api.user.domain.UserDetailsRepository
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 /**
  * Email user login service
@@ -29,6 +29,8 @@ class EmailLoginServiceImpl(
     private val userRepository: UserRepository,
     private val userCredentialRepository: UserCredentialRepository,
     private val userDetailsRepository: UserDetailsRepository,
+    private val emailSignupAuthorizationRequestRepository: EmailSignupAuthorizationRequestRepository,
+    private val mailingService: AwsMailingService,
     private val jwtService: JwtService,
 ): EmailLoginService {
     override fun login(request: EmailUserLogin): LoginInfo {
@@ -59,10 +61,19 @@ class EmailLoginServiceImpl(
     }
 
     override fun signup(request: EmailUserCreate): LoginInfo {
+        // * email validation
+        if (userRepository.existsEmail(request.email)) {
+            throwInvalidRequest(
+                errorCode = ErrorCode.DUPLICATED_EMAIL_SIGNUP,
+                debugMessage = "already exist email",
+                httpStatus = HttpStatus.BAD_REQUEST,
+            )
+        }
+
         val encodedPw = passwordEncoder.encode(request.password)
 
         // * create user
-        val user = UserFactory.createUser(request.email, listOf(RoleType.USER))
+        val user = UserFactory.createUser(request.email, listOf(RoleType.USER), ActivateStatus.NOT_AUTHORIZED_BY_EMAIL)
         userRepository.save(user)
 
         // * create social type
@@ -76,6 +87,16 @@ class EmailLoginServiceImpl(
         val userDetails = UserDetailsFactory.create(request.nickname, user)
         userDetailsRepository.save(userDetails)
 
+        // * create email authorization
+        val auth = EmailSignupAuthorizationRequestFactory.create(user)
+        emailSignupAuthorizationRequestRepository.save(auth)
+
+        // * send mail (async process)
+        mailingService.sendSignupAuthorizationEmail(EmailSignupAuthorizationValues(
+            to = request.email,
+            uri = "https://www.codepied.com/signup/auth/${auth.uuid}"
+        ))
+
         return LoginInfoImpl(
             user = user,
             accessToken = jwtService.generateAccessToken(user),
@@ -84,5 +105,11 @@ class EmailLoginServiceImpl(
             userProfile = null,
             email = request.email,
         )
+    }
+
+    override fun activateAccountByEmailAuthorization(uuid: UUID) {
+        val auth = emailSignupAuthorizationRequestRepository.getByUuid(uuid)
+
+        auth.user.activateStatus = ActivateStatus.ACTIVATED
     }
 }

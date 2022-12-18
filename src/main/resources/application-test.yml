@@ -20,4 +20,11 @@ jwt:
     accessTokenLifetime: 1800000 # 30 min
     refreshTokenLifetime: 10800000 # 3 hour
     
-    
+config:
+    aws:
+        accessKeyId: "tempAccessKeyId"
+        secretAccessKey: "tempSecretAccessKey"
+    async:
+        asyncPoolMinCapacity: 10
+        asyncPoolMaxCapacity: 50
+        asyncPoolQueueCapacity: 50
