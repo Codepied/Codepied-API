@@ -1,7 +1,7 @@
 package com.codepied.api.api.config
 
 import com.codepied.api.api.locale.LocaleChangeFilter
-import com.codepied.api.api.role.Role
+import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.JwtAuthFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -55,8 +55,8 @@ class WebSecurityConfig(
         httpSecurity.authorizeHttpRequests()
             .antMatchers("/api/users/auth/**").permitAll()
             .antMatchers("/**").authenticated()
-            .antMatchers("/api/management/**").hasAnyRole(Role.MANAGER.name, Role.ADMIN.name)
-            .antMatchers("/api/admin/**").hasRole(Role.ADMIN.name)
+            .antMatchers("/api/management/**").hasAnyRole(RoleType.MANAGER.name, RoleType.PLATFORM_ADMIN.name)
+            .antMatchers("/api/admin/**").hasRole(RoleType.PLATFORM_ADMIN.name)
 
         return httpSecurity.build()
     }

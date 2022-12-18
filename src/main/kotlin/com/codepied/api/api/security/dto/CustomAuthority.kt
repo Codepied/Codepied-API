@@ -1,8 +1,14 @@
 package com.codepied.api.api.security.dto
 
-import com.codepied.api.api.role.Role
+import com.codepied.api.api.role.RoleType
 import org.springframework.security.core.GrantedAuthority
 
-class CustomAuthority(val role: Role) : GrantedAuthority {
-    override fun getAuthority(): String = role.name
+/**
+ * Authentication
+ *
+ * @author Aivyss
+ * @since 2022/12/17
+ */
+class CustomAuthority(val roleType: RoleType) : GrantedAuthority {
+    override fun getAuthority(): String = roleType.name
 }

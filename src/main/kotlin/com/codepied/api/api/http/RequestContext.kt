@@ -1,6 +1,6 @@
 package com.codepied.api.api.http
 
-import com.codepied.api.api.role.Role
+import com.codepied.api.api.role.RoleType
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.stereotype.Component
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component
 @Scope("request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 class RequestContext {
     var userKey: Long = -1
-    var roles: List<Role> = listOf()
+    var roleTypes: List<RoleType> = listOf()
     var supportLanguage: SupportLanguage = SupportLanguage.KO
     var validUser: Boolean = false
 }

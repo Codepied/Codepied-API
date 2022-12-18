@@ -8,7 +8,9 @@ spring:
     jpa:
         open-in-view: false
         show-sql: true
-
+        hibernate:
+            ddl-auto: create-drop
+            
 domain:
     allow-cors:
         localhost: http://localhost:8080

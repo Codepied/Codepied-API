@@ -8,7 +8,6 @@ plugins {
     kotlin("plugin.jpa") version "1.6.21"
     kotlin("plugin.noarg") version "1.6.21"
     kotlin("kapt") version "1.6.21"
-
 }
 
 group = "com.codepied"
@@ -38,6 +37,8 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt:0.9.1")
     /* data validation */
     implementation("org.springframework.boot:spring-boot-starter-validation:2.7.5")
+    /* webflux */
+    implementation("org.springframework.boot:spring-boot-starter-webflux:2.7.0")
     /* kotlin */
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
