@@ -39,6 +39,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation:2.7.5")
     /* webflux */
     implementation("org.springframework.boot:spring-boot-starter-webflux:2.7.0")
+    /* aws */
+    implementation("software.amazon.awssdk:ses:2.18.41")
+    implementation("software.amazon.awssdk:sdk-core:2.18.41")
     /* kotlin */
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
