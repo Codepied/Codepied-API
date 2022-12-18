@@ -20,6 +20,9 @@ class EmailTemplate(
     @Column(name = "TEMPLATE_KEY")
     val id: Long,
 
+    @Column(name = "TITLE", nullable = false, updatable = false)
+    val title: String,
+
     @Column(name = "TEMPLATE", nullable = false, updatable = false)
     val template: String,
 

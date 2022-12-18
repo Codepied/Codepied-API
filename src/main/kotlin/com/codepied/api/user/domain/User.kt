@@ -9,7 +9,6 @@ import com.codepied.api.user.domain.QSocialUserIdentification.socialUserIdentifi
 import com.codepied.api.user.domain.QUserCredential.userCredential
 import com.codepied.api.user.domain.QUserDetails.userDetails
 import com.querydsl.jpa.impl.JPAQueryFactory
-import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Component
 import javax.persistence.*
@@ -28,6 +27,9 @@ class User(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_KEY")
     val id: Long,
+
+    @Column(name = "ACTIVATE_STATUS", nullable = false, updatable = true)
+    var activateStatus: ActivateStatus
 ) {
     @OneToMany(mappedBy = "user", cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH])
     val roles: MutableList<UserRole> = mutableListOf()
@@ -58,9 +60,10 @@ class User(
 }
 
 object UserFactory {
-    fun createUser(email: String, roleTypes: List<RoleType>): User {
+    fun createUser(email: String, roleTypes: List<RoleType>, activateStatus: ActivateStatus): User {
         val user = User(
             id = 0L,
+            activateStatus = activateStatus
         )
 
         return roleTypes.forEach { user.addRole(it) }.let { user }
@@ -80,6 +83,7 @@ fun UserRepository.getUserById(id: Long): User {
 
 interface UserQueryRepository {
     fun findEmailUser(email: String): Pair<UserDetails, UserCredential>?
+    fun existsEmail(email: String): Boolean
 }
 
 @Component
@@ -107,5 +111,15 @@ class UserQueryRepositoryImpl(
             .where(userCredential.user.eq(socialUser.user)).fetchOne() ?: return null
 
         return userDetailsEntity to userCredential
+    }
+
+    override fun existsEmail(email: String): Boolean {
+        return jpaQueryFactory
+            .select(socialUserIdentification)
+            .from(socialUserIdentification)
+            .where(
+                socialUserIdentification.email.eq(email)
+            )
+            .fetch().size > 0
     }
 }
