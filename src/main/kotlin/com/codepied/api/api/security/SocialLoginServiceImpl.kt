@@ -31,6 +31,7 @@ class SocialLoginServiceImpl (private val webClient: WebClient): SocialLoginServ
         }.block()
 
         println(result?.success);
+        println("test push");
 
         when(socialType) {
             SocialType.GOOGLE -> {
