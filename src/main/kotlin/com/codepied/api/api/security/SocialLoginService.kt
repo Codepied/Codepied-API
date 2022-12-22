@@ -21,7 +21,7 @@ interface SocialLoginService {
  * @since 2022/12/17
  */
 interface LoginInfo {
-    fun getUser(): User
+    fun getUserKey(): Long
     fun getAccessToken(): String
     fun getRefreshToken(): String
     fun getNickname(): String
@@ -36,14 +36,14 @@ interface LoginInfo {
  * @since 2022/12/17
  */
 class LoginInfoImpl(
-    private val user: User,
+    private val userKey: Long,
     private val accessToken: String,
     private val refreshToken: String,
     private val nickname: String,
     private val userProfile: String?,
     private val email: String?,
 ): LoginInfo {
-    override fun getUser(): User = user
+    override fun getUserKey(): Long = userKey
 
     override fun getAccessToken(): String = accessToken
 

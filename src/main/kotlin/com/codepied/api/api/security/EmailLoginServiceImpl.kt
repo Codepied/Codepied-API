@@ -51,7 +51,7 @@ class EmailLoginServiceImpl(
         }
 
         return LoginInfoImpl(
-            user = userInfo.first.user,
+            userKey = userInfo.first.user.id,
             accessToken = jwtService.generateAccessToken(userInfo.first.user),
             refreshToken = jwtService.generateRefreshToken(userInfo.first.user),
             nickname = userInfo.first.nickname,
@@ -65,6 +65,15 @@ class EmailLoginServiceImpl(
         if (userRepository.existsEmail(request.email)) {
             throwInvalidRequest(
                 errorCode = ErrorCode.DUPLICATED_EMAIL_SIGNUP,
+                debugMessage = "already exist email",
+                httpStatus = HttpStatus.BAD_REQUEST,
+            )
+        }
+
+        // * nickname validation
+        if (userRepository.existsNickname(request.nickname)) {
+            throwInvalidRequest(
+                errorCode = ErrorCode.DUPLICATED_NICKNAME,
                 debugMessage = "already exist email",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
@@ -98,9 +107,9 @@ class EmailLoginServiceImpl(
         ))
 
         return LoginInfoImpl(
-            user = user,
-            accessToken = jwtService.generateAccessToken(user),
-            refreshToken = jwtService.generateRefreshToken(user),
+            userKey = user.id,
+            accessToken = "",
+            refreshToken = "",
             nickname = userDetails.nickname,
             userProfile = null,
             email = request.email,

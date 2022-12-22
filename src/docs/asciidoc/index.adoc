@@ -1,0 +1,16 @@
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== Email User Signup
+
+=== Raw Request
+include::{snippets}/EMAIL_SIGNUP/http-request.adoc[]
+
+=== Request Body
+include::{snippets}/EMAIL_SIGNUP/request-fields.adoc[]
+include::{snippets}/EMAIL_SIGNUP/request-body.adoc[]
+
+=== Response
+include::{snippets}/EMAIL_SIGNUP/response-fields.adoc[]
+include::{snippets}/EMAIL_SIGNUP/http-response.adoc[]
