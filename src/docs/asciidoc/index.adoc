@@ -2,6 +2,7 @@
 :toclevels: 2
 :source-highlighter: highlightjs
 
+// -------------------------------
 == Email User Signup
 
 === Raw Request
@@ -14,3 +15,18 @@ include::{snippets}/EMAIL_SIGNUP/request-body.adoc[]
 === Response
 include::{snippets}/EMAIL_SIGNUP/response-fields.adoc[]
 include::{snippets}/EMAIL_SIGNUP/http-response.adoc[]
+// -------------------------------
+
+== Email User Login
+
+=== Raw Request
+include::{snippets}/EMAIL_LOGIN/http-request.adoc[]
+
+=== Request Body
+include::{snippets}/EMAIL_LOGIN/request-fields.adoc[]
+include::{snippets}/EMAIL_LOGIN/request-body.adoc[]
+
+=== Response
+include::{snippets}/EMAIL_LOGIN/response-fields.adoc[]
+include::{snippets}/EMAIL_LOGIN/http-response.adoc[]
+// -------------------------------

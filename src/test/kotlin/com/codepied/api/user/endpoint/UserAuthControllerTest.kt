@@ -34,12 +34,12 @@ class UserAuthControllerTest : AbstractEndpointTest("/api/users/auths") {
     fun `이메일 회원가입 성공`() {
         // * given
         doReturn(LoginInfoImpl(
-            userKey = 1L,
-            accessToken = "",
-            refreshToken = "",
-            nickname = "test_nickname",
-            userProfile = null,
-            email = "test@test.com"
+                userKey = 1L,
+                accessToken = "",
+                refreshToken = "",
+                nickname = "test_nickname",
+                userProfile = null,
+                email = "test@test.com"
         )).`when`(emailLoginService).signup(any())
 
         // * when
@@ -51,26 +51,67 @@ class UserAuthControllerTest : AbstractEndpointTest("/api/users/auths") {
                     "password": "password_test",
                     "nickname": "test_nickname"
                 }""".trimIndent()
-            )
+                )
         )
 
         val test: List<FieldDescriptor> = listOf<FieldDescriptor>()
         requestFields(test)
         // * then
         perform.andExpect(status().isCreated)
-            .andExpect(jsonPath("$.data.userKey").isNumber)
-            .andDo(document(DocumentEnum.EMAIL_SIGNUP.name, requestFields(
-                fieldWithPath("email").type("String").description("user email"),
-                fieldWithPath("password").type("String").description("user password"),
-                fieldWithPath("nickname").type("String").description("user nickname"),
-            ), RestDocStore.responseSnippet(
-                    fieldWithPath("data").type("EmailUserCreate").description("user email"),
-                    fieldWithPath("data.userKey").type("Long").description("userKey"),
-                    fieldWithPath("data.accessToken").type("String").description("JWT, but empty"),
-                    fieldWithPath("data.refreshToken").type("String").description("JWT, but empty"),
-                    fieldWithPath("data.nickname").type("String").description("user nickname"),
-                    fieldWithPath("data.userProfile").type("String?").description("user profile").optional(),
-                    fieldWithPath("data.email").type("String").description("user email"),
-            )))
+                .andExpect(jsonPath("$.data.userKey").isNumber)
+                .andDo(document(DocumentEnum.EMAIL_SIGNUP.name, requestFields(
+                        fieldWithPath("email").type("String").description("user email"),
+                        fieldWithPath("password").type("String").description("user password"),
+                        fieldWithPath("nickname").type("String").description("user nickname"),
+                ), RestDocStore.responseSnippet(
+                        fieldWithPath("data").type("EmailUserCreate").description("user email"),
+                        fieldWithPath("data.userKey").type("Long").description("userKey"),
+                        fieldWithPath("data.accessToken").type("String").description("JWT, but empty"),
+                        fieldWithPath("data.refreshToken").type("String").description("JWT, but empty"),
+                        fieldWithPath("data.nickname").type("String").description("user nickname"),
+                        fieldWithPath("data.userProfile").type("String?").description("user profile").optional(),
+                        fieldWithPath("data.email").type("String").description("user email"),
+                )))
+    }
+
+    @Test
+    fun `이메일 로그인 성공`() {
+        // * given
+        doReturn(LoginInfoImpl(
+                userKey = 1L,
+                accessToken = "oghoqr320jftg[0awifdjfoiemacvzkz.fiowefma.zdfiefas",
+                refreshToken = "o323mf2iofa.foi3jfm;a.ifjawoeif",
+                nickname = "test_nickname",
+                userProfile = null,
+                email = "test@test.com"
+        )).`when`(emailLoginService).login(any())
+
+        // * when
+        val perform = mockMvc(controller).perform(post("$uri/login")
+                .param("type", "EMAIL")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content("""{
+                    "email": "test@test.com",
+                    "password": "password_test"
+                }""".trimIndent()))
+
+        // * then
+        perform.andExpect(status().isOk)
+                .andExpect(jsonPath("$.data.userKey").isNumber)
+                .andDo(
+                    document(DocumentEnum.EMAIL_LOGIN.name, requestFields(
+                            fieldWithPath("email").type("String").description("user email"),
+                            fieldWithPath("password").type("String").description("user password"),
+                    ), RestDocStore.responseSnippet(
+                            fieldWithPath("data").type("EmailUserCreate").description("user email"),
+                            fieldWithPath("data.userKey").type("Long").description("userKey"),
+                            fieldWithPath("data.accessToken").type("String").description("access JWT"),
+                            fieldWithPath("data.refreshToken").type("String").description("refresh JWT"),
+                            fieldWithPath("data.nickname").type("String").description("user nickname"),
+                            fieldWithPath("data.userProfile").type("String?").description("user profile").optional(),
+                            fieldWithPath("data.email").type("String").description("user email"),
+                    )),
+                )
     }
 }
