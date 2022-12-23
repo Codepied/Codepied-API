@@ -42,6 +42,14 @@ class EmailLoginServiceImpl(
             httpStatus = HttpStatus.BAD_REQUEST,
         )
 
+        if (userInfo.first.user.activateStatus == ActivateStatus.NOT_AUTHORIZED_BY_EMAIL) {
+            throwInvalidRequest(
+                errorCode = ErrorCode.NOT_AUTHORIZED_EMAIL_USER,
+                debugMessage = "not accessible user",
+                httpStatus = HttpStatus.BAD_REQUEST,
+            )
+        }
+
         if (!passwordEncoder.matches(request.password, userInfo.second.password)) {
             throwInvalidRequest(
                 errorCode = ErrorCode.NOT_MATCHES_PASSWORD_LOGIN_ERROR,

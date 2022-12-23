@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.7.6"
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
+    id ("org.jetbrains.kotlin.plugin.allopen") version "1.6.21"
     /* plugin for spring rest doc */
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     kotlin("jvm") version "1.6.21"
@@ -10,6 +11,7 @@ plugins {
     kotlin("plugin.jpa") version "1.6.21"
     kotlin("plugin.noarg") version "1.6.21"
     kotlin("kapt") version "1.6.21"
+
 }
 
 group = "com.codepied"
@@ -62,6 +64,10 @@ dependencies {
     testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor")
     /* configuration processor */
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+}
+
+allOpen {
+    annotation("javax.persistence.Entity")
 }
 
 tasks.withType<KotlinCompile> {

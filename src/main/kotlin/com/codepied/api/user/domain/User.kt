@@ -100,7 +100,6 @@ class UserQueryRepositoryImpl(
                 socialUserIdentification.socialType.eq(SocialType.EMAIL),
                 socialUserIdentification.email.eq(email),
             ).fetchOne() ?: return null
-
         val userDetailsEntity = jpaQueryFactory.select(userDetails)
             .from(userDetails)
             .innerJoin(userDetails.user, userAlias)
