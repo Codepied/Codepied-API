@@ -2,6 +2,7 @@ package com.codepied.api.user.domain
 
 import com.codepied.api.api.security.SocialType
 import com.codepied.api.domain.User
+import org.springframework.data.jpa.repository.JpaRepository
 import javax.persistence.*
 
 /**
@@ -41,4 +42,8 @@ object SocialUserIdentificationFactory {
             email = email,
         )
     }
+}
+
+interface SocialUserIdentificationRepository : JpaRepository<SocialUserIdentification, Long> {
+    fun findBySocialTypeAndSocialIdentification(socialType: SocialType, socialIdentification: String): SocialUserIdentification?
 }

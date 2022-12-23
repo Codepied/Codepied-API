@@ -19,7 +19,8 @@ enum class ErrorCode : CodeEnum {
     INVALID_ACCESS_TOKEN,
     DUPLICATED_EMAIL_SIGNUP,
     DUPLICATED_NICKNAME,
-    NOT_AUTHORIZED_EMAIL_USER
+    NOT_AUTHORIZED_EMAIL_USER,
+    NOT_ACCESSIBLE_SOCIAL_USER_GOOGLE,
     ;
 
     override fun getCodeValue(): String = "EXCEPTION.$name"

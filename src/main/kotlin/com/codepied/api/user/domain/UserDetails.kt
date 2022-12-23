@@ -41,4 +41,6 @@ object UserDetailsFactory {
     }
 }
 
-interface UserDetailsRepository : JpaRepository<UserDetails, Long>
+interface UserDetailsRepository : JpaRepository<UserDetails, Long> {
+    fun findByUser(user: User): UserDetails?
+}

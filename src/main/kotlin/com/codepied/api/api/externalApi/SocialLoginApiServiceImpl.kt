@@ -2,19 +2,14 @@ package com.codepied.api.api.externalApi
 
 import com.codepied.api.api.security.SocialAccount
 import com.codepied.api.api.security.SocialType
+import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Service
 
 @Service
-class SocialLoginApiServiceImpl(
-    kakaoApiService: KakaoLoginApiService,
-    naverApiService: NaverLoginApiService,
-    googleApiService: GoogleLoginApiService
-): SocialLoginApiService {
-    private val apiService: Map<SocialType, SpecificProviderLoginApiService> = mapOf(
-        SocialType.KAKAO to kakaoApiService,
-        SocialType.NAVER to naverApiService,
-        SocialType.GOOGLE to googleApiService,
-    )
+class SocialLoginApiServiceImpl(applicationContext: ApplicationContext) : SocialLoginApiService {
+    private val apiService = applicationContext
+        .getBeansOfType(SpecificProviderLoginApiService::class.java)
+        .values.associateBy { it.supportType() }
 
     override fun loginAuthorization(socialType: SocialType, authorizationCode: String): SocialAccount {
         val socialAccount = apiService[socialType]?.login(authorizationCode)

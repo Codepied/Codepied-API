@@ -1,40 +1,76 @@
 package com.codepied.api.api.security
 
+import com.codepied.api.api.exception.ErrorCode
+import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
+import com.codepied.api.api.externalApi.SocialLoginApiService
+import com.codepied.api.api.role.RoleType
 import com.codepied.api.domain.User
+import com.codepied.api.domain.UserFactory
+import com.codepied.api.domain.UserRepository
+import com.codepied.api.user.domain.ActivateStatus
+import com.codepied.api.user.domain.SocialUserIdentificationRepository
+import com.codepied.api.user.domain.UserDetailsFactory
+import com.codepied.api.user.domain.UserDetailsRepository
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
-class SocialLoginServiceImpl: SocialLoginService {
-    override fun signup(socialType: SocialType, authorizationCode: String): LoginInfo {
-        when(socialType) {
-            SocialType.GOOGLE -> {
+@Transactional
+class SocialLoginServiceImpl(
+    private val externalApiService: SocialLoginApiService,
+    private val socialUserIdentificationRepository: SocialUserIdentificationRepository,
+    private val userDetailsRepository: UserDetailsRepository,
+    private val userRepository: UserRepository,
+    private val jwtService: JwtService,
+): SocialLoginService {
+    override fun signup(socialType: SocialType, socialAccount: SocialAccount): LoginInfo {
+        val user = UserFactory.createUser(socialAccount.email(), listOf(RoleType.USER), ActivateStatus.ACTIVATED)
+        user.addSocialIdentification(socialAccount.socialIdentification(), socialType, socialAccount.email())
+        userRepository.save(user)
 
-            }
-            SocialType.KAKAO -> {
+        val userDetails = UserDetailsFactory.create("유동-${UUID.randomUUID()}", user)
+        userDetailsRepository.save(userDetails)
 
-            }
-            SocialType.NAVER -> {
-
-            }
-            else -> null
-        }
-        TODO("Not yet implemented")
+        return LoginInfoImpl(
+            userKey = user.id,
+            accessToken = jwtService.generateAccessToken(user),
+            refreshToken = jwtService.generateRefreshToken(user),
+            nickname = userDetails.nickname,
+            userProfile = null,
+            email = socialAccount.email(),
+        )
     }
 
     override fun login(socialType: SocialType, authorizationCode: String): LoginInfo {
-        when(socialType) {
-            SocialType.GOOGLE -> {
+        val socialAccount = externalApiService.loginAuthorization(socialType, authorizationCode)
+        val socialIdentification =
+            socialUserIdentificationRepository.findBySocialTypeAndSocialIdentification(
+                socialType,
+                socialAccount.socialIdentification()
+            )
 
-            }
-            SocialType.KAKAO -> {
+        // * signup
+        return if (socialIdentification == null) {
+            this.signup(socialType, socialAccount)
+        } else {
+            val user = socialIdentification.user
+            val userDetails = userDetailsRepository.findByUser(user) ?: throwInvalidRequest(
+                errorCode = ErrorCode.NO_SUCH_USER_LOGIN_ERROR,
+                debugMessage = "not accessible user",
+                httpStatus = HttpStatus.BAD_REQUEST,
+            )
 
-            }
-            SocialType.NAVER -> {
-
-            }
-            else -> null
+            LoginInfoImpl(
+                userKey = user.id,
+                accessToken = jwtService.generateAccessToken(user),
+                refreshToken = jwtService.generateRefreshToken(user),
+                nickname = userDetails.nickname,
+                userProfile = null,
+                email = socialIdentification.email,
+            )
         }
-        TODO("Not yet implemented")
     }
 
     override fun logout(socialType: SocialType, authorizationCode: String, user: User) {
