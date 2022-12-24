@@ -1,5 +1,7 @@
-package com.codepied.api.api.security
+package com.codepied.api.api.security.application
 
+import com.codepied.api.api.security.dto.SocialAccount
+import com.codepied.api.api.security.SocialType
 import com.codepied.api.domain.User
 
 /**
@@ -9,7 +11,7 @@ import com.codepied.api.domain.User
  * @since 2022/12/17
  */
 interface SocialLoginService {
-    fun signup(socialType: SocialType, authorizationCode: String): LoginInfo
+    fun signup(socialType: SocialType, socialAccount: SocialAccount): LoginInfo
     fun login(socialType: SocialType, authorizationCode: String): LoginInfo
     fun logout(socialType: SocialType, authorizationCode: String, user: User)
 }

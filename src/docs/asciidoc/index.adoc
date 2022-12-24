@@ -30,3 +30,17 @@ include::{snippets}/EMAIL_LOGIN/request-body.adoc[]
 include::{snippets}/EMAIL_LOGIN/response-fields.adoc[]
 include::{snippets}/EMAIL_LOGIN/http-response.adoc[]
 // -------------------------------
+
+== Social User Login
+
+=== Raw Request
+include::{snippets}/SOCIAL_LOGIN/http-request.adoc[]
+
+=== Request Body
+include::{snippets}/SOCIAL_LOGIN/request-fields.adoc[]
+include::{snippets}/SOCIAL_LOGIN/request-body.adoc[]
+
+=== Response
+include::{snippets}/SOCIAL_LOGIN/response-fields.adoc[]
+include::{snippets}/SOCIAL_LOGIN/http-response.adoc[]
+// -------------------------------

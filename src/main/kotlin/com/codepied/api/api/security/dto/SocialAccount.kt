@@ -1,6 +1,6 @@
-package com.codepied.api.api.security
+package com.codepied.api.api.security.dto
 
 interface SocialAccount {
     fun socialIdentification(): String
-    fun getEmail(): String
+    fun email(): String
 }
