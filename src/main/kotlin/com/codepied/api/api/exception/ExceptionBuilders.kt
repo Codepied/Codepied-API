@@ -29,4 +29,10 @@ object InvalidRequestExceptionBuilder {
         debugMessage = debugMessage,
         httpStatus = httpStatus,
     )
+
+    fun throwInternalServerError(): Nothing = throwInvalidRequest(
+        errorCode = ErrorCode.INTERNAL_SERVER_ERROR,
+        debugMessage = "unknown server error",
+        httpStatus = HttpStatus.INTERNAL_SERVER_ERROR
+    )
 }

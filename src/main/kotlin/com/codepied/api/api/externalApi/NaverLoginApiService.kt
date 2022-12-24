@@ -3,7 +3,8 @@ package com.codepied.api.api.externalApi
 import com.codepied.api.api.config.NaverSocialLoginProperty
 import com.codepied.api.api.exception.ErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.invalidRequest
-import com.codepied.api.api.externalApi.dto.SocialAccountImpl
+import com.codepied.api.api.externalApi.dto.NaverLoginTokenResponse
+import com.codepied.api.api.externalApi.dto.NaverLoginUserInfo
 import com.codepied.api.api.security.SocialType
 import com.codepied.api.api.security.dto.SocialAccount
 import org.springframework.core.ParameterizedTypeReference
@@ -12,6 +13,12 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 
+/**
+ * social login Api Service: provider: NAVER
+ *
+ * @author Aivyss
+ * @since 2022/12/24
+ */
 @Service
 class NaverLoginApiService(
     private val webClient: WebClient,
@@ -50,29 +57,3 @@ class NaverLoginApiService(
 
     override fun supportType(): SocialType = SocialType.NAVER
 }
-
-class NaverLoginTokenResponse(
-    val access_token: String,
-    val refresh_token: String,
-    val token_type: String,
-    val expires_in: Int,
-    val error: String?,
-    val error_description: String?,
-)
-
-class NaverLoginUserInfo(
-    val resultCode: String?,
-    val message: String?,
-    val response: NaverLoginUserData?,
-) {
-    fun create(): SocialAccount? {
-        return if (response != null) SocialAccountImpl(
-            id = response.id,
-            email = response.email,
-        ) else null
-    }
-}
-class NaverLoginUserData(
-    val id: String,
-    val email: String,
-)
