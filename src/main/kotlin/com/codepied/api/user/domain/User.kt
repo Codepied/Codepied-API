@@ -84,6 +84,7 @@ fun UserRepository.getUserById(id: Long): User {
 interface UserQueryRepository {
     fun findEmailUser(email: String): Pair<UserDetails, UserCredential>?
     fun existsEmail(email: String): Boolean
+    fun existsNickname(nickname: String): Boolean
 }
 
 @Component
@@ -99,7 +100,6 @@ class UserQueryRepositoryImpl(
                 socialUserIdentification.socialType.eq(SocialType.EMAIL),
                 socialUserIdentification.email.eq(email),
             ).fetchOne() ?: return null
-
         val userDetailsEntity = jpaQueryFactory.select(userDetails)
             .from(userDetails)
             .innerJoin(userDetails.user, userAlias)
@@ -121,5 +121,12 @@ class UserQueryRepositoryImpl(
                 socialUserIdentification.email.eq(email)
             )
             .fetch().size > 0
+    }
+
+    override fun existsNickname(nickname: String): Boolean {
+        return jpaQueryFactory.select(userDetails.count())
+            .from(userDetails)
+            .where(userDetails.nickname.eq(nickname))
+            .fetchOne() ?: 1L == 1L
     }
 }

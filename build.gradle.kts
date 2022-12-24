@@ -3,11 +3,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.7.6"
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
+    id ("org.jetbrains.kotlin.plugin.allopen") version "1.6.21"
+    /* plugin for spring rest doc */
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     kotlin("plugin.jpa") version "1.6.21"
     kotlin("plugin.noarg") version "1.6.21"
     kotlin("kapt") version "1.6.21"
+
 }
 
 group = "com.codepied"
@@ -55,8 +59,15 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito:mockito-core:4.8.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    /* Spring Rest Doc */
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor")
     /* configuration processor */
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+}
+
+allOpen {
+    annotation("javax.persistence.Entity")
 }
 
 tasks.withType<KotlinCompile> {
@@ -68,4 +79,58 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+/**
+ * task setting for spring rest doc
+ */
+tasks {
+    /**
+     * snippetsDir 설정
+     */
+    val snippetsDir by extra { file("build/generated-snippets") }
+
+    clean {
+        delete("src/main/resources/static/docs")
+    }
+
+    test {
+        /**
+         * test output dir 설정
+         */
+        useJUnitPlatform()
+        systemProperty("org.springframework.restdocs.outputDir", snippetsDir)
+        outputs.dir(snippetsDir)
+    }
+
+    build {
+        dependsOn("copyDocument")
+    }
+
+    asciidoctor {
+        dependsOn(test)
+        attributes(mapOf("snippets" to snippetsDir))
+        inputs.dir(snippetsDir)
+
+        doFirst {
+            delete("src/main/resources/static/docs")
+        }
+    }
+
+    register<Copy>("copyDocument") {
+        dependsOn(asciidoctor)
+
+        destinationDir = file(".")
+        from(asciidoctor.get().outputDir) {
+            into("src/main/resources/static/docs")
+        }
+    }
+
+    bootJar {
+        dependsOn(asciidoctor)
+
+        from(asciidoctor.get().outputDir) {
+            into("BOOT-INF/classes/static/docs")
+        }
+    }
 }

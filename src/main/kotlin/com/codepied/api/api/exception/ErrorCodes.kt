@@ -18,6 +18,8 @@ enum class ErrorCode : CodeEnum {
     ACCESS_TOKEN_EXPIRED,
     INVALID_ACCESS_TOKEN,
     DUPLICATED_EMAIL_SIGNUP,
+    DUPLICATED_NICKNAME,
+    NOT_AUTHORIZED_EMAIL_USER
     ;
 
     override fun getCodeValue(): String = "EXCEPTION.$name"

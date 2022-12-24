@@ -42,6 +42,14 @@ class EmailLoginServiceImpl(
             httpStatus = HttpStatus.BAD_REQUEST,
         )
 
+        if (userInfo.first.user.activateStatus == ActivateStatus.NOT_AUTHORIZED_BY_EMAIL) {
+            throwInvalidRequest(
+                errorCode = ErrorCode.NOT_AUTHORIZED_EMAIL_USER,
+                debugMessage = "not accessible user",
+                httpStatus = HttpStatus.BAD_REQUEST,
+            )
+        }
+
         if (!passwordEncoder.matches(request.password, userInfo.second.password)) {
             throwInvalidRequest(
                 errorCode = ErrorCode.NOT_MATCHES_PASSWORD_LOGIN_ERROR,
@@ -51,7 +59,7 @@ class EmailLoginServiceImpl(
         }
 
         return LoginInfoImpl(
-            user = userInfo.first.user,
+            userKey = userInfo.first.user.id,
             accessToken = jwtService.generateAccessToken(userInfo.first.user),
             refreshToken = jwtService.generateRefreshToken(userInfo.first.user),
             nickname = userInfo.first.nickname,
@@ -65,6 +73,15 @@ class EmailLoginServiceImpl(
         if (userRepository.existsEmail(request.email)) {
             throwInvalidRequest(
                 errorCode = ErrorCode.DUPLICATED_EMAIL_SIGNUP,
+                debugMessage = "already exist email",
+                httpStatus = HttpStatus.BAD_REQUEST,
+            )
+        }
+
+        // * nickname validation
+        if (userRepository.existsNickname(request.nickname)) {
+            throwInvalidRequest(
+                errorCode = ErrorCode.DUPLICATED_NICKNAME,
                 debugMessage = "already exist email",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
@@ -98,9 +115,9 @@ class EmailLoginServiceImpl(
         ))
 
         return LoginInfoImpl(
-            user = user,
-            accessToken = jwtService.generateAccessToken(user),
-            refreshToken = jwtService.generateRefreshToken(user),
+            userKey = user.id,
+            accessToken = "",
+            refreshToken = "",
             nickname = userDetails.nickname,
             userProfile = null,
             email = request.email,
