@@ -13,6 +13,12 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 
+/**
+ * social login Api Service: provider: NAVER
+ *
+ * @author Aivyss
+ * @since 2022/12/24
+ */
 @Service
 class NaverLoginApiService(
     private val webClient: WebClient,

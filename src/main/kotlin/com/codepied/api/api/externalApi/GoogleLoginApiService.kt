@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 
 /**
- * Google Social Auth Service
+ * social login Api Service: provider: GOOGLE
+ *
  * @author Aivyss
  * @since 2022/12/24
  */
