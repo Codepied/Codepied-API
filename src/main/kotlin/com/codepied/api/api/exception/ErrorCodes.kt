@@ -21,6 +21,7 @@ enum class ErrorCode : CodeEnum {
     DUPLICATED_NICKNAME,
     NOT_AUTHORIZED_EMAIL_USER,
     NOT_ACCESSIBLE_SOCIAL_USER_GOOGLE,
+    NOT_ACCESSIBLE_SOCIAL_USER_NAVER,
     ;
 
     override fun getCodeValue(): String = "EXCEPTION.$name"
