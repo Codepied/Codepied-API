@@ -43,6 +43,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation:2.7.5")
     /* webflux */
     implementation("org.springframework.boot:spring-boot-starter-webflux:2.7.0")
+    implementation("io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64")
     /* aws */
     implementation("software.amazon.awssdk:ses:2.18.41")
     implementation("software.amazon.awssdk:sdk-core:2.18.41")

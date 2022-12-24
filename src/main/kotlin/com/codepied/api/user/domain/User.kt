@@ -28,6 +28,7 @@ class User(
     @Column(name = "USER_KEY")
     val id: Long,
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "ACTIVATE_STATUS", nullable = false, updatable = true)
     var activateStatus: ActivateStatus
 ) {
