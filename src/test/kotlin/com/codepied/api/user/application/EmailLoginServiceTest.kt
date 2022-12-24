@@ -4,8 +4,8 @@ import com.codepied.api.api.exception.ErrorCode
 import com.codepied.api.api.exception.InvalidRequestException
 import com.codepied.api.api.mailing.application.AwsMailingService
 import com.codepied.api.api.role.RoleType
-import com.codepied.api.api.security.EmailLoginServiceImpl
-import com.codepied.api.api.security.JwtService
+import com.codepied.api.api.security.application.EmailLoginServiceImpl
+import com.codepied.api.api.security.application.JwtService
 import com.codepied.api.domain.User
 import com.codepied.api.domain.UserFactory
 import com.codepied.api.domain.UserRepository
@@ -13,7 +13,6 @@ import com.codepied.api.endpoint.dto.EmailUserCreate
 import com.codepied.api.test.AbstractServiceTest
 import com.codepied.api.user.domain.*
 import com.codepied.api.user.dto.EmailUserLogin
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString

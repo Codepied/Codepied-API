@@ -1,4 +1,4 @@
-package com.codepied.api.api.security
+package com.codepied.api.api.security.dto
 
 interface SocialAccount {
     fun socialIdentification(): String

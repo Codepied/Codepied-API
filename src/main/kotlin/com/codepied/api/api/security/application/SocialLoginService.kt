@@ -1,5 +1,7 @@
-package com.codepied.api.api.security
+package com.codepied.api.api.security.application
 
+import com.codepied.api.api.security.dto.SocialAccount
+import com.codepied.api.api.security.SocialType
 import com.codepied.api.domain.User
 
 /**

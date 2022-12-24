@@ -1,8 +1,8 @@
 package com.codepied.api.user.endpoint
 
-import com.codepied.api.api.security.EmailLoginService
-import com.codepied.api.api.security.LoginInfoImpl
-import com.codepied.api.api.security.SocialLoginService
+import com.codepied.api.api.security.application.EmailLoginService
+import com.codepied.api.api.security.application.LoginInfoImpl
+import com.codepied.api.api.security.application.SocialLoginService
 import com.codepied.api.api.security.SocialType
 import com.codepied.api.test.AbstractEndpointTest
 import com.codepied.api.test.DocumentEnum
@@ -35,14 +35,16 @@ class UserAuthControllerTest : AbstractEndpointTest("/api/users/auths") {
     @Test
     fun `이메일 회원가입 성공`() {
         // * given
-        doReturn(LoginInfoImpl(
+        doReturn(
+            LoginInfoImpl(
                 userKey = 1L,
                 accessToken = "",
                 refreshToken = "",
                 nickname = "test_nickname",
                 userProfile = null,
                 email = "test@test.com"
-        )).`when`(emailLoginService).signup(any())
+        )
+        ).`when`(emailLoginService).signup(any())
 
         // * when
         val perform = mockMvc(controller).perform(post("$uri/signup")
@@ -79,14 +81,16 @@ class UserAuthControllerTest : AbstractEndpointTest("/api/users/auths") {
     @Test
     fun `이메일 로그인 성공`() {
         // * given
-        doReturn(LoginInfoImpl(
+        doReturn(
+            LoginInfoImpl(
                 userKey = 1L,
                 accessToken = "oghoqr320jftg[0awifdjfoiemacvzkz.fiowefma.zdfiefas",
                 refreshToken = "o323mf2iofa.foi3jfm;a.ifjawoeif",
                 nickname = "test_nickname",
                 userProfile = null,
                 email = "test@test.com"
-        )).`when`(emailLoginService).login(any())
+        )
+        ).`when`(emailLoginService).login(any())
 
         // * when
         val perform = mockMvc(controller).perform(post("$uri/login")

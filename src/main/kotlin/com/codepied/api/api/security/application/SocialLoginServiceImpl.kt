@@ -1,9 +1,11 @@
-package com.codepied.api.api.security
+package com.codepied.api.api.security.application
 
 import com.codepied.api.api.exception.ErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.externalApi.SocialLoginApiService
 import com.codepied.api.api.role.RoleType
+import com.codepied.api.api.security.dto.SocialAccount
+import com.codepied.api.api.security.SocialType
 import com.codepied.api.domain.User
 import com.codepied.api.domain.UserFactory
 import com.codepied.api.domain.UserRepository

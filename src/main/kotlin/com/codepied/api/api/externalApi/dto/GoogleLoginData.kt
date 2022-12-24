@@ -1,6 +1,6 @@
 package com.codepied.api.api.externalApi.dto
 
-import com.codepied.api.api.security.SocialAccount
+import com.codepied.api.api.security.dto.SocialAccount
 
 class GoogleLoginData(
     val id: String,

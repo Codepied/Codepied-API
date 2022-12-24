@@ -1,4 +1,4 @@
-package com.codepied.api.api.security
+package com.codepied.api.api.security.application
 
 import com.codepied.api.api.ObjectMapperHolder
 import com.codepied.api.api.TimeService

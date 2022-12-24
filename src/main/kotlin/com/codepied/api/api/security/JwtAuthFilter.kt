@@ -3,6 +3,7 @@ package com.codepied.api.api.security
 import com.codepied.api.api.exception.ExceptionController
 import com.codepied.api.api.exception.InvalidRequestException
 import com.codepied.api.api.http.RequestContext
+import com.codepied.api.api.security.application.JwtService
 import com.codepied.api.api.security.dto.JwtAuthExcludeUrlPattern
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.security.core.context.SecurityContextHolder

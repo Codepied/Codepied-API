@@ -3,7 +3,7 @@ package com.codepied.api.api.externalApi
 import com.codepied.api.api.exception.ErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.invalidRequest
 import com.codepied.api.api.externalApi.dto.GoogleLoginData
-import com.codepied.api.api.security.SocialAccount
+import com.codepied.api.api.security.dto.SocialAccount
 import com.codepied.api.api.security.SocialType
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus
