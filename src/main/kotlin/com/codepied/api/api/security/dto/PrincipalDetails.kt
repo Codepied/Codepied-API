@@ -1,7 +1,7 @@
 package com.codepied.api.api.security.dto
 
 import com.codepied.api.api.role.RoleType
-import com.codepied.api.domain.User
+import com.codepied.api.user.domain.User
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority

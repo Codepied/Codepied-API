@@ -6,9 +6,9 @@ import com.codepied.api.api.externalApi.SocialLoginApiService
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.dto.SocialAccount
 import com.codepied.api.api.security.SocialType
-import com.codepied.api.domain.User
-import com.codepied.api.domain.UserFactory
-import com.codepied.api.domain.UserRepository
+import com.codepied.api.user.domain.User
+import com.codepied.api.user.domain.UserFactory
+import com.codepied.api.user.domain.UserRepository
 import com.codepied.api.user.domain.ActivateStatus
 import com.codepied.api.user.domain.SocialUserIdentificationRepository
 import com.codepied.api.user.domain.UserDetailsFactory

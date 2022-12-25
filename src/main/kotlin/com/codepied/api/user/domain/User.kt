@@ -1,18 +1,21 @@
-package com.codepied.api.domain
+package com.codepied.api.user.domain
 
+import com.codepied.api.api.domain.Audit
 import com.codepied.api.api.exception.ErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.invalidRequest
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.SocialType
-import com.codepied.api.user.domain.*
+import com.codepied.api.domain.UserRole
+import com.codepied.api.domain.UserRoleFactory
 import com.codepied.api.user.domain.QSocialUserIdentification.socialUserIdentification
+import com.codepied.api.user.domain.QUser.user as  userAlias
 import com.codepied.api.user.domain.QUserCredential.userCredential
 import com.codepied.api.user.domain.QUserDetails.userDetails
 import com.querydsl.jpa.impl.JPAQueryFactory
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Component
 import javax.persistence.*
-import com.codepied.api.domain.QUser.user as userAlias
 
 /**
  * User Entity
@@ -22,6 +25,7 @@ import com.codepied.api.domain.QUser.user as userAlias
  */
 @Entity
 @Table(name = "MST_USER")
+@EntityListeners(AuditingEntityListener::class)
 class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,8 +42,8 @@ class User(
     @OneToMany(mappedBy = "user", cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH])
     val socialIdentifications: MutableList<SocialUserIdentification> = mutableListOf()
 
-    @Column(name = "DELETED", nullable = false)
-    var deleted: Boolean = false
+    @Embedded
+    var audit: Audit = Audit()
 
     fun addRole(roleType: RoleType): User {
         val userRole = UserRoleFactory.create(roleType = roleType, user = this)
@@ -91,7 +95,7 @@ interface UserQueryRepository {
 @Component
 class UserQueryRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory,
-) : UserQueryRepository{
+) : UserQueryRepository {
     override fun findEmailUser(email: String): Pair<UserDetails, UserCredential>? {
         val socialUser = jpaQueryFactory.select(socialUserIdentification)
             .from(socialUserIdentification)

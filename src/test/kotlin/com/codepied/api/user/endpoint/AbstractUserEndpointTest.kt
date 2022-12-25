@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration
@@ -37,6 +38,7 @@ import org.springframework.web.context.WebApplicationContext
  */
 @ActiveProfiles("test")
 @ImportAutoConfiguration(MessageSourceAutoConfiguration::class)
+@MockBean(JpaMetamodelMappingContext::class)
 @ExtendWith(value = [RestDocumentationExtension::class, SpringExtension::class])
 @WebMvcTest(
     value = [

@@ -1,6 +1,7 @@
 package com.codepied.api.user.domain
 
-import com.codepied.api.domain.User
+import com.codepied.api.api.domain.Audit
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import javax.persistence.*
 
@@ -12,6 +13,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(name = "MST_USER_CREDENTIAL")
+@EntityListeners(AuditingEntityListener::class)
 class UserCredential(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +25,10 @@ class UserCredential(
 
     @OneToOne
     @JoinColumn(name = "USER_KEY", nullable = false, updatable = false, unique = true)
-    val user: User
+    val user: User,
+
+    @Embedded
+    val audit: Audit = Audit(),
 )
 
 object UserCredentialFactory {

@@ -6,7 +6,7 @@ import com.codepied.api.api.config.JwtProperty
 import com.codepied.api.api.exception.ErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.security.dto.PrincipalDetails
-import com.codepied.api.domain.User
+import com.codepied.api.user.domain.User
 import com.fasterxml.jackson.core.type.TypeReference
 import io.jsonwebtoken.*
 import org.springframework.stereotype.Service

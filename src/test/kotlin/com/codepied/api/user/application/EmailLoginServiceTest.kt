@@ -6,9 +6,9 @@ import com.codepied.api.api.mailing.application.AwsMailingService
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.application.EmailLoginServiceImpl
 import com.codepied.api.api.security.application.JwtService
-import com.codepied.api.domain.User
-import com.codepied.api.domain.UserFactory
-import com.codepied.api.domain.UserRepository
+import com.codepied.api.user.domain.User
+import com.codepied.api.user.domain.UserFactory
+import com.codepied.api.user.domain.UserRepository
 import com.codepied.api.endpoint.dto.EmailUserCreate
 import com.codepied.api.test.AbstractServiceTest
 import com.codepied.api.user.domain.*
