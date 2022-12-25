@@ -18,6 +18,7 @@ import javax.persistence.*
 class SocialUserIdentification(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "SOCIAL_IDENT_KEY")
     val id: Long,
 
     @Column(name = "IDENTIFICATION", updatable = false, nullable = false, unique = true)

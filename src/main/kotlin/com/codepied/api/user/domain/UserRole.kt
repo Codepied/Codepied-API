@@ -22,6 +22,7 @@ class UserRole(
     val id: Long,
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "ROLE_TYPE", nullable = false, updatable = false)
     val roleType: RoleType,
 
     @ManyToOne(fetch = FetchType.LAZY)
