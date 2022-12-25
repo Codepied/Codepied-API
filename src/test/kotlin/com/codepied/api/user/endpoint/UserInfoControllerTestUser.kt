@@ -5,13 +5,19 @@ import com.codepied.api.test.DocumentEnum
 import com.codepied.api.test.RestDocStore
 import com.codepied.api.user.dto.UserDataDuplicateType
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import org.springframework.http.MediaType
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -41,7 +47,7 @@ class UserInfoControllerTestUser : AbstractUserEndpointTest("/api/users/info") {
     }
 
     @Test
-    fun `적합하지 않은 타입`() {
+    fun `중복체크 실패 - 적합하지 않은 타입`() {
         // * when
         val perform = mockMvc.perform(
             get("$uri/duplicate")
@@ -52,5 +58,44 @@ class UserInfoControllerTestUser : AbstractUserEndpointTest("/api/users/info") {
         // * then
         perform.andExpect(status().is4xxClientError)
             .andExpect(jsonPath("$.errorCode").value(ErrorCode.INVALID_ENUM_CODE_ERROR.name))
+    }
+
+    @Test
+    fun `비밀번호 변경 성공`() {
+        // * given
+        val oldPassword = "fjaoiwejfa"
+        val newPassword = "$%fmia291gc"
+        doNothing().`when`(userInfoService).changePassword(newPassword, oldPassword)
+
+        // * when
+        val perform = mockMvc.perform(
+            patch(uri)
+                .param("type", "PASSWORD")
+                .header("Authorization", "Bearer $accessToken")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content("""{
+                    "oldPassword": "$oldPassword",
+                    "newPassword": "$newPassword"
+                }""".trimIndent())
+        )
+
+        // * then
+        perform.andExpect(status().is2xxSuccessful)
+            .andExpect(jsonPath("$.data").value(true))
+            .andDo(
+                document(DocumentEnum.EMAIL_USER_PASSWORD_CHANGE.name,
+                requestHeaders(
+                    headerWithName("Authorization").description("Bearer \${accessToken}"),
+                ),
+                requestParameters(parameterWithName("type").description("PASSWORD (only)")),
+                requestFields(
+                    fieldWithPath("oldPassword").type("String").description("예전 비밀번호 / Not Blank 제약조건"),
+                    fieldWithPath("newPassword").type("String").description("새로운 비밀번호 / 8 ~ 15자 특문 영문 숫자 포함")
+                ),
+                RestDocStore.responseSnippet(
+                    fieldWithPath("data").type("Boolean").description("요청이 잘못되지 않을 경우 반드시 true")
+                )
+            ))
     }
 }

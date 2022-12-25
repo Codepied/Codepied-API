@@ -19,7 +19,7 @@ class UserCredential(
     val id: Long,
 
     @Column(name = "PASSWORD", nullable = false, updatable = true)
-    val password: String,
+    var password: String,
 
     @OneToOne
     @JoinColumn(name = "USER_KEY", nullable = false, updatable = false, unique = true)
@@ -36,4 +36,6 @@ object UserCredentialFactory {
     }
 }
 
-interface UserCredentialRepository : JpaRepository<UserCredential, Long>
+interface UserCredentialRepository : JpaRepository<UserCredential, Long> {
+    fun findByUserId(userId: Long): UserCredential?
+}

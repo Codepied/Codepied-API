@@ -70,6 +70,9 @@ abstract class AbstractUserEndpointTest(val uri: String) {
 
     protected lateinit var mockMvc: MockMvc
 
+    protected val accessToken = "fjoaiwefasw.fkjasfoawef.fjioaefjawe"
+    protected val refreshToken = "fiawjeofaswesf.viaowefjwe.ckZXJCOasd"
+
     @BeforeEach
     fun initRestDocumentation(restDocumentation: RestDocumentationContextProvider) {
         this.restDocumentation = restDocumentation

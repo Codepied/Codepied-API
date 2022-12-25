@@ -1,6 +1,7 @@
 package com.codepied.api.api.security.application
 
 import com.codepied.api.api.exception.ErrorCode
+import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidPassword
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.mailing.application.AwsMailingService
 import com.codepied.api.api.mailing.dto.EmailSignupAuthorizationValues
@@ -52,11 +53,7 @@ class EmailLoginServiceImpl(
         }
 
         if (!passwordEncoder.matches(request.password, userInfo.second.password)) {
-            throwInvalidRequest(
-                errorCode = ErrorCode.NOT_MATCHES_PASSWORD_LOGIN_ERROR,
-                debugMessage = "not accessible user",
-                httpStatus = HttpStatus.BAD_REQUEST,
-            )
+            throwInvalidPassword()
         }
 
         return LoginInfoImpl(

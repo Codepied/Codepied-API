@@ -13,7 +13,7 @@ object RestDocStore {
         chunks += fieldWithPath("httpStatus").type("HttpStatus").description("http status")
         chunks += fieldWithPath("success").type("Boolean").description("success status")
         chunks += fieldWithPath("supportLanguage").type("String").description("support language")
-        chunks += fieldWithPath("responseTime").type("List<Int>").description("response time")
+        chunks += fieldWithPath("responseTime").type("LocalDateTime").description("response time")
 
         return responseFields(chunks)
     }
