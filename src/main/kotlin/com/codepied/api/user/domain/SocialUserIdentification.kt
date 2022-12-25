@@ -46,4 +46,5 @@ object SocialUserIdentificationFactory {
 
 interface SocialUserIdentificationRepository : JpaRepository<SocialUserIdentification, Long> {
     fun findBySocialTypeAndSocialIdentification(socialType: SocialType, socialIdentification: String): SocialUserIdentification?
+    fun existsByEmail(email: String): Boolean
 }

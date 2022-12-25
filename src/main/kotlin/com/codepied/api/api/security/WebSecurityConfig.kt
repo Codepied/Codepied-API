@@ -1,8 +1,8 @@
-package com.codepied.api.api.config
+package com.codepied.api.api.security
 
+import com.codepied.api.api.config.CorsDomainProperty
 import com.codepied.api.api.locale.LocaleChangeFilter
 import com.codepied.api.api.role.RoleType
-import com.codepied.api.api.security.JwtAuthFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
@@ -54,6 +54,7 @@ class WebSecurityConfig(
 
         httpSecurity.authorizeHttpRequests()
             .antMatchers("/api/users/auths/**").permitAll()
+            .antMatchers("/api/users/info/duplicate").permitAll()
             .antMatchers("/**").authenticated()
             .antMatchers("/api/management/**").hasAnyRole(RoleType.MANAGER.name, RoleType.PLATFORM_ADMIN.name)
             .antMatchers("/api/admin/**").hasRole(RoleType.PLATFORM_ADMIN.name)

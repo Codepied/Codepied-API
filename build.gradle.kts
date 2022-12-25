@@ -134,4 +134,8 @@ tasks {
             into("BOOT-INF/classes/static/docs")
         }
     }
+
+    processResources {
+        duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+    }
 }
