@@ -23,6 +23,7 @@ enum class ErrorCode : CodeEnum {
     NOT_ACCESSIBLE_SOCIAL_USER_GOOGLE,
     NOT_ACCESSIBLE_SOCIAL_USER_NAVER,
     NOT_ACCESSIBLE_SOCIAL_USER_KAKAO,
+    INVALID_ENUM_CODE_ERROR,
     ;
 
     override fun getCodeValue(): String = "EXCEPTION.$name"

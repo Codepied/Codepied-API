@@ -35,4 +35,10 @@ object InvalidRequestExceptionBuilder {
         debugMessage = "unknown server error",
         httpStatus = HttpStatus.INTERNAL_SERVER_ERROR
     )
+
+    fun throwEnumCodeError(): Nothing = throwInvalidRequest(
+        errorCode = ErrorCode.INVALID_ENUM_CODE_ERROR,
+        debugMessage = "invalid enum input",
+        httpStatus = HttpStatus.BAD_REQUEST
+    )
 }

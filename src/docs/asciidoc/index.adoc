@@ -44,3 +44,18 @@ include::{snippets}/SOCIAL_LOGIN/request-body.adoc[]
 include::{snippets}/SOCIAL_LOGIN/response-fields.adoc[]
 include::{snippets}/SOCIAL_LOGIN/http-response.adoc[]
 // -------------------------------
+
+== Check Duplicated User Info
+
+=== Raw Request
+include::{snippets}/USER_INFO_DUPLICATE/http-request.adoc[]
+
+=== Request Params
+include::{snippets}/USER_INFO_DUPLICATE/request-parameters.adoc[]
+=== Request Body
+include::{snippets}/USER_INFO_DUPLICATE/request-body.adoc[]
+
+=== Response
+include::{snippets}/USER_INFO_DUPLICATE/response-fields.adoc[]
+include::{snippets}/USER_INFO_DUPLICATE/http-response.adoc[]
+// -------------------------------

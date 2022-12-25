@@ -1,15 +1,10 @@
 package com.codepied.api.user.endpoint
 
-import com.codepied.api.api.security.application.EmailLoginService
-import com.codepied.api.api.security.application.LoginInfoImpl
-import com.codepied.api.api.security.application.SocialLoginService
 import com.codepied.api.api.security.SocialType
-import com.codepied.api.test.AbstractEndpointTest
+import com.codepied.api.api.security.application.LoginInfoImpl
 import com.codepied.api.test.DocumentEnum
 import com.codepied.api.test.RestDocStore
 import org.junit.jupiter.api.Test
-import org.mockito.InjectMocks
-import org.mockito.Mock
 import org.mockito.Mockito.doReturn
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -22,16 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class UserAuthControllerTest : AbstractEndpointTest("/api/users/auths") {
-    @Mock
-    private lateinit var socialLoginService: SocialLoginService
-
-    @Mock
-    private lateinit var emailLoginService: EmailLoginService
-
-    @InjectMocks
-    private lateinit var controller: UserAuthController
-
+class UserAuthControllerTestUser : AbstractUserEndpointTest("/api/users/auths") {
     @Test
     fun `이메일 회원가입 성공`() {
         // * given
@@ -47,7 +33,7 @@ class UserAuthControllerTest : AbstractEndpointTest("/api/users/auths") {
         ).`when`(emailLoginService).signup(any())
 
         // * when
-        val perform = mockMvc(controller).perform(post("$uri/signup")
+        val perform = mockMvc.perform(post("$uri/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content("""{
@@ -93,7 +79,7 @@ class UserAuthControllerTest : AbstractEndpointTest("/api/users/auths") {
         ).`when`(emailLoginService).login(any())
 
         // * when
-        val perform = mockMvc(controller).perform(post("$uri/login")
+        val perform = mockMvc.perform(post("$uri/login")
                 .param("type", "EMAIL")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -137,7 +123,7 @@ class UserAuthControllerTest : AbstractEndpointTest("/api/users/auths") {
         doReturn(responseData).`when`(socialLoginService).login(eq(socialType), eq(authorizationCode))
 
         // * when
-        val perform = mockMvc(controller).perform(post("$uri/login")
+        val perform = mockMvc.perform(post("$uri/login")
             .param("type", socialType.name)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
