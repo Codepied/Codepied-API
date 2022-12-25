@@ -41,14 +41,13 @@ class UserInfoService(
         this::class.declaredFunctions.forEach { it.isAccessible = true }
 
         this.duplicateObserver = mapOf(
-            UserDataDuplicateType.EMAIL to matchesMethod("checkDuplicatedEmail")
+            UserDataDuplicateType.EMAIL to matchesMethod("checkDuplicatedEmail"),
+            UserDataDuplicateType.NICKNAME to matchesMethod("checkDuplicatedNickname")
         )
     }
 
-    fun checkDuplicatedUserInfo(data: String, type: UserDataDuplicateType) : Boolean {
-        val checkFunction = duplicateObserver[type]
-        return checkFunction?.call(this, data) == true
-    }
+    fun checkDuplicatedUserInfo(data: String, type: UserDataDuplicateType) = duplicateObserver[type]
+        ?.call(this, data) == true
 
     fun changePassword(newPassword: String, oldPassword: String) {
         val userCredential = userCredentialRepository.findByUserId(requestContext.userKey)
@@ -68,4 +67,5 @@ class UserInfoService(
     }
 
     private fun checkDuplicatedEmail(email: String) = socialUserIdentificationRepository.existsByEmail(email)
+    private fun checkDuplicatedNickname(nickname: String) = userDetailsRepository.existsByNickname(nickname)
 }

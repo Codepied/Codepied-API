@@ -44,4 +44,5 @@ object UserDetailsFactory {
 interface UserDetailsRepository : JpaRepository<UserDetails, Long> {
     fun findByUser(user: User): UserDetails?
     fun findByUserId(userId: Long): UserDetails?
+    fun existsByNickname(nickname: String): Boolean
 }
