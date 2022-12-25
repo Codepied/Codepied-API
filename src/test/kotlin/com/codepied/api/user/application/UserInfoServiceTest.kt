@@ -52,6 +52,20 @@ class UserInfoServiceTest : AbstractServiceTest() {
     }
 
     @Test
+    fun `닉네임 중복체크 성공`() {
+        // * given
+        val data = "nickname"
+        val type = UserDataDuplicateType.NICKNAME
+        doReturn(true).`when`(userDetailsRepository).existsByNickname(eq(data))
+
+        // * when
+        val result = service.checkDuplicatedUserInfo(data, type)
+
+        // * then
+        assertThat(result).isTrue
+    }
+
+    @Test
     fun `비밀번호 변경 성공`() {
         // * given
         val userCredential = createOneUserCredential()
