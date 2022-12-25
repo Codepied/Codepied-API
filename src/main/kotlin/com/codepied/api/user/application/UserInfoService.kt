@@ -1,8 +1,14 @@
 package com.codepied.api.user.application
 
+import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidPassword
+import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwNoSuchUser
+import com.codepied.api.api.http.RequestContext
 import com.codepied.api.user.domain.SocialUserIdentificationRepository
+import com.codepied.api.user.domain.UserCredentialRepository
 import com.codepied.api.user.dto.UserDataDuplicateType
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.jvm.isAccessible
@@ -14,8 +20,12 @@ import kotlin.reflect.jvm.isAccessible
  * @since 2022/12/25
  */
 @Service
+@Transactional
 class UserInfoService(
     private val socialUserIdentificationRepository: SocialUserIdentificationRepository,
+    private val userCredentialRepository: UserCredentialRepository,
+    private val requestContext: RequestContext,
+    private val passwordEncoder: PasswordEncoder,
 ) {
     private val duplicateObserver: Map<UserDataDuplicateType, KFunction<*>?>
 
@@ -36,6 +46,17 @@ class UserInfoService(
     fun checkDuplicatedUserInfo(data: String, type: UserDataDuplicateType) : Boolean {
         val checkFunction = duplicateObserver[type]
         return checkFunction?.call(this, data) == true
+    }
+
+    fun changePassword(newPassword: String, oldPassword: String) {
+        val userCredential = userCredentialRepository.findByUserId(requestContext.userKey)
+            ?: throwNoSuchUser()
+
+        if (!passwordEncoder.matches(oldPassword, userCredential.password)) {
+            throwInvalidPassword()
+        }
+
+        userCredential.password = passwordEncoder.encode(newPassword)
     }
 
     private fun checkDuplicatedEmail(email: String) = socialUserIdentificationRepository.existsByEmail(email)

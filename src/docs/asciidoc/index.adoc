@@ -59,3 +59,23 @@ include::{snippets}/USER_INFO_DUPLICATE/request-body.adoc[]
 include::{snippets}/USER_INFO_DUPLICATE/response-fields.adoc[]
 include::{snippets}/USER_INFO_DUPLICATE/http-response.adoc[]
 // -------------------------------
+
+== Change Email User's Password
+
+=== Raw Request
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/http-request.adoc[]
+
+=== Request Headers
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/request-headers.adoc[]
+
+=== Request Params
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/request-parameters.adoc[]
+
+=== Request Body
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/request-fields.adoc[]
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/request-body.adoc[]
+
+=== Response
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/response-fields.adoc[]
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/http-response.adoc[]
+// -------------------------------

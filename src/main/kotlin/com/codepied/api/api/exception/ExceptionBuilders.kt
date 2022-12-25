@@ -41,4 +41,16 @@ object InvalidRequestExceptionBuilder {
         debugMessage = "invalid enum input",
         httpStatus = HttpStatus.BAD_REQUEST
     )
+
+    fun throwNoSuchUser(): Nothing = throwInvalidRequest(
+        errorCode = ErrorCode.NO_SUCH_USER_LOGIN,
+        debugMessage = "no such user",
+        httpStatus = HttpStatus.BAD_REQUEST
+    )
+
+    fun throwInvalidPassword() : Nothing = throwInvalidRequest(
+        errorCode = ErrorCode.NOT_MATCHES_PASSWORD_LOGIN_ERROR,
+        debugMessage = "not accessible user",
+        httpStatus = HttpStatus.BAD_REQUEST,
+    )
 }
