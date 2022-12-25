@@ -5,6 +5,7 @@ import com.codepied.api.test.DocumentEnum
 import com.codepied.api.test.RestDocStore
 import com.codepied.api.user.dto.UserDataDuplicateType
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -97,5 +98,57 @@ class UserInfoControllerTestUser : AbstractUserEndpointTest("/api/users/info") {
                     fieldWithPath("data").type("Boolean").description("요청이 잘못되지 않을 경우 반드시 true")
                 )
             ))
+    }
+
+    @Test
+    fun `닉네임 변경 성공`() {
+        // * given
+        doNothing().`when`(userInfoService).changeNickname(anyString())
+
+        // * when
+        val perform = mockMvc.perform(
+            patch(uri)
+                .header("Authorization", accessToken)
+                .param("type", "NICKNAME")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content("""{
+                        "nickname": "nickname"
+                    }""".trimMargin()))
+
+        // * then
+        perform.andExpect(status().is2xxSuccessful)
+            .andExpect(jsonPath("$.data").value(true))
+            .andDo(
+                document(DocumentEnum.NICKNAME_CHANGE.name,
+                    requestHeaders(
+                        headerWithName("Authorization").description("Bearer \${accessToken}"),
+                    ),
+                    requestParameters(parameterWithName("type").description("NICKNAME (only)")),
+                    requestFields(
+                        fieldWithPath("nickname").type("String").description("새 닉네임 / 공백불가 / 2 ~ 15자, 한글, 영문, 숫자만 가능"),
+                    ),
+                    RestDocStore.responseSnippet(
+                        fieldWithPath("data").type("Boolean").description("요청이 잘못되지 않을 경우 반드시 true")
+                    )
+                ))
+    }
+
+    @Test
+    fun `닉네임 변경 실패 - 적합하지 않은 닉네임 포맷`() {
+        // * when
+        val perform = mockMvc.perform(
+            patch(uri)
+                .param("type", "NICKNAME")
+                .header("Authorization", accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content("""{
+                        "nickname": "new nickname"
+                    }""".trimMargin()))
+
+        // * then
+        perform.andExpect(status().is4xxClientError)
+            .andExpect(jsonPath("$.errorCode").value("INVALID_NICKNAME"))
     }
 }

@@ -20,7 +20,7 @@ class UserDetails(
     val id: Long,
 
     @Column(name = "NICKNAME", nullable = false, updatable = true, unique = true)
-    val nickname: String,
+    var nickname: String,
 
     @Column(name = "STR_ID", nullable = false, updatable = false, unique = true)
     val uuid: UUID,
@@ -43,4 +43,5 @@ object UserDetailsFactory {
 
 interface UserDetailsRepository : JpaRepository<UserDetails, Long> {
     fun findByUser(user: User): UserDetails?
+    fun findByUserId(userId: Long): UserDetails?
 }

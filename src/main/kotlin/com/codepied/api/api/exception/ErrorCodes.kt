@@ -43,6 +43,9 @@ enum class ErrorCode : CodeEnum {
  */
 enum class ParameterErrorCode : CodeEnum {
     EMAIL_FORMAT,
+    NOT_BLANK,
+    NICKNAME_SIZE,
+    INVALID_NICKNAME,
     ;
 
     override fun getCodeValue(): String = "EXCEPTION.PARAMETERS.${name}"

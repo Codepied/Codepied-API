@@ -79,3 +79,23 @@ include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/request-body.adoc[]
 include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/response-fields.adoc[]
 include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/http-response.adoc[]
 // -------------------------------
+
+== Change Nickname
+
+=== Raw Request
+include::{snippets}/NICKNAME_CHANGE/http-request.adoc[]
+
+=== Request Headers
+include::{snippets}/NICKNAME_CHANGE/request-headers.adoc[]
+
+=== Request Params
+include::{snippets}/NICKNAME_CHANGE/request-parameters.adoc[]
+
+=== Request Body
+include::{snippets}/NICKNAME_CHANGE/request-fields.adoc[]
+include::{snippets}/NICKNAME_CHANGE/request-body.adoc[]
+
+=== Response
+include::{snippets}/NICKNAME_CHANGE/response-fields.adoc[]
+include::{snippets}/NICKNAME_CHANGE/http-response.adoc[]
+// -------------------------------

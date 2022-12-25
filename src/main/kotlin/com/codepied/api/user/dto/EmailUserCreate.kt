@@ -18,6 +18,6 @@ data class EmailUserCreate(
     val password: String,
 
     @field:NotBlank(message = "EXCEPTION.PARAMETERS.NOT_BLANK")
-    @field:Size(max = 20, message = "EXCEPTION.PARAMETERS.NICKNAME_SIZE")
+    @field:Size(min= 2, max = 15, message = "EXCEPTION.PARAMETERS.NICKNAME_SIZE")
     val nickname: String,
 )

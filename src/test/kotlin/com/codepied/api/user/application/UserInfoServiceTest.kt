@@ -5,8 +5,10 @@ import com.codepied.api.api.exception.InvalidRequestException
 import com.codepied.api.api.http.RequestContext
 import com.codepied.api.test.AbstractServiceTest
 import com.codepied.api.test.MockStore.createOneUserCredential
+import com.codepied.api.test.MockStore.createOneUserDetails
 import com.codepied.api.user.domain.SocialUserIdentificationRepository
 import com.codepied.api.user.domain.UserCredentialRepository
+import com.codepied.api.user.domain.UserDetailsRepository
 import com.codepied.api.user.dto.UserDataDuplicateType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
@@ -28,6 +30,8 @@ class UserInfoServiceTest : AbstractServiceTest() {
     private lateinit var requestContext: RequestContext
     @Mock
     private lateinit var passwordEncoder: PasswordEncoder
+    @Mock
+    private lateinit var userDetailsRepository: UserDetailsRepository
 
     @InjectMocks
     private lateinit var service: UserInfoService
@@ -87,5 +91,29 @@ class UserInfoServiceTest : AbstractServiceTest() {
         assertThat(throwable is InvalidRequestException).isTrue
         val exception = throwable as InvalidRequestException
         assertThat(exception.errorCode).isEqualTo(ErrorCode.NOT_MATCHES_PASSWORD_LOGIN_ERROR)
+    }
+
+    @Test
+    fun `닉네임 변경 성공`() {
+        // * given
+        val userDetails = createOneUserDetails()
+        doReturn(userDetails).`when`(userDetailsRepository).findByUserId(anyLong())
+
+        // * when
+        service.changeNickname("changeNickname")
+    }
+
+    @Test
+    fun `닉네임 변경 실패`() {
+        // * given
+        doReturn(null).`when`(userDetailsRepository).findByUserId(anyLong())
+
+        // * when
+        val throwable = catchThrowable { service.changeNickname("nickname") }
+
+        // * then
+        assertThat(throwable is InvalidRequestException).isTrue
+        val exception = throwable as InvalidRequestException
+        assertThat(exception.errorCode).isEqualTo(ErrorCode.NO_SUCH_USER_LOGIN)
     }
 }
