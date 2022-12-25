@@ -5,6 +5,7 @@ import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwNoSuch
 import com.codepied.api.api.http.RequestContext
 import com.codepied.api.user.domain.SocialUserIdentificationRepository
 import com.codepied.api.user.domain.UserCredentialRepository
+import com.codepied.api.user.domain.UserDetailsRepository
 import com.codepied.api.user.dto.UserDataDuplicateType
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -23,6 +24,7 @@ import kotlin.reflect.jvm.isAccessible
 @Transactional
 class UserInfoService(
     private val socialUserIdentificationRepository: SocialUserIdentificationRepository,
+    private val userDetailsRepository: UserDetailsRepository,
     private val userCredentialRepository: UserCredentialRepository,
     private val requestContext: RequestContext,
     private val passwordEncoder: PasswordEncoder,
@@ -57,6 +59,12 @@ class UserInfoService(
         }
 
         userCredential.password = passwordEncoder.encode(newPassword)
+    }
+
+    fun  changeNickname(nickname: String) {
+        userDetailsRepository.findByUserId(requestContext.userKey)?.apply {
+            this.nickname = nickname
+        } ?: throwNoSuchUser()
     }
 
     private fun checkDuplicatedEmail(email: String) = socialUserIdentificationRepository.existsByEmail(email)

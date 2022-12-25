@@ -3,6 +3,7 @@ package com.codepied.api.user.endpoint
 import com.codepied.api.api.http.SuccessResponse
 import com.codepied.api.user.application.UserInfoService
 import com.codepied.api.user.dto.ChangeEmailUserPassword
+import com.codepied.api.user.dto.ChangeNickname
 import com.codepied.api.user.dto.UserDataDuplicateType
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
@@ -42,6 +43,16 @@ class UserInfoController(
         @Valid @RequestBody request: ChangeEmailUserPassword,
     ): SuccessResponse<Boolean> {
         service.changePassword(request.newPassword, request.oldPassword)
+
+        return SuccessResponse(true)
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping(params=["type=NICKNAME"])
+    fun changeNickname(
+        @Valid @RequestBody request: ChangeNickname,
+    ): SuccessResponse<Boolean> {
+        service.changeNickname(request.nickname)
 
         return SuccessResponse(true)
     }

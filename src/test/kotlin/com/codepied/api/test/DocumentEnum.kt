@@ -6,5 +6,6 @@ enum class DocumentEnum {
     SOCIAL_LOGIN,
     USER_INFO_DUPLICATE,
     EMAIL_USER_PASSWORD_CHANGE,
+    NICKNAME_CHANGE,
     ;
 }
