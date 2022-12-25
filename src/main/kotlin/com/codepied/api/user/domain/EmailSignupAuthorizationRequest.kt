@@ -1,8 +1,9 @@
 package com.codepied.api.user.domain
 
+import com.codepied.api.api.domain.Audit
 import com.codepied.api.api.exception.ErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
-import com.codepied.api.domain.User
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 import javax.persistence.*
@@ -15,6 +16,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(name = "EMAIL_SIGNUP_AUTH")
+@EntityListeners(AuditingEntityListener::class)
 class EmailSignupAuthorizationRequest(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +29,9 @@ class EmailSignupAuthorizationRequest(
 ) {
     @Column(name = "UUID", updatable = false, nullable = false, unique = true)
     val uuid: UUID = UUID.randomUUID()
+
+    @Embedded
+    val audit: Audit = Audit()
 }
 
 object EmailSignupAuthorizationRequestFactory {

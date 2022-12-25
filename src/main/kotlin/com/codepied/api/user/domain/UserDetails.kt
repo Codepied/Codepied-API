@@ -1,6 +1,7 @@
 package com.codepied.api.user.domain
 
-import com.codepied.api.domain.User
+import com.codepied.api.api.domain.Audit
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 import javax.persistence.*
@@ -13,6 +14,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(name = "MST_USER_DETAILS")
+@EntityListeners(AuditingEntityListener::class)
 class UserDetails(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +30,9 @@ class UserDetails(
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_KEY", nullable = false, updatable = false, unique = true)
     val user: User,
+
+    @Embedded
+    val audit: Audit = Audit(),
 )
 
 object UserDetailsFactory {

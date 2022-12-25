@@ -1,6 +1,5 @@
 package com.codepied.api.user.domain
 
-import com.codepied.api.domain.UserRepository
 import com.codepied.api.test.MockStore
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

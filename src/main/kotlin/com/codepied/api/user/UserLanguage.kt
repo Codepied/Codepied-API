@@ -1,8 +1,11 @@
 package com.codepied.api.domain
 
+import com.codepied.api.api.domain.Audit
 import com.codepied.api.api.exception.ErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.http.SupportLanguage
+import com.codepied.api.user.domain.User
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
@@ -11,6 +14,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "USER_LANG")
+@EntityListeners(AuditingEntityListener::class)
 class UserLanguage(
     @Id
     @Column(name = "USER_KEY")
@@ -26,7 +30,10 @@ class UserLanguage(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "SUPPORT_LANG", nullable = false, updatable = true)
-    var supportLanguage: SupportLanguage = SupportLanguage.EN,
+    var supportLanguage: SupportLanguage = SupportLanguage.KO,
+
+    @Embedded
+    val audit: Audit = Audit(),
 )
 
 object UserLanguageFactory {

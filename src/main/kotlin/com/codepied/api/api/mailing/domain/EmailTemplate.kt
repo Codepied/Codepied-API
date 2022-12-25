@@ -1,7 +1,9 @@
 package com.codepied.api.api.mailing.domain
 
+import com.codepied.api.api.domain.Audit
 import com.codepied.api.api.exception.ErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.http.HttpStatus
 import javax.persistence.*
@@ -14,6 +16,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(name = "EMAIL_TEMPLATE")
+@EntityListeners(AuditingEntityListener::class)
 class EmailTemplate(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +32,9 @@ class EmailTemplate(
     @Enumerated(EnumType.STRING)
     @Column(name = "TEMPLATE_TYPE", nullable = false, updatable = false, unique = true)
     val type: EmailTemplateType,
+
+    @Embedded
+    val audit: Audit = Audit(),
 )
 
 interface EmailTemplateRepository : JpaRepository<EmailTemplate, Long> {
