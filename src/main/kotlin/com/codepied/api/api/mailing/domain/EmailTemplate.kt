@@ -1,7 +1,7 @@
 package com.codepied.api.api.mailing.domain
 
 import com.codepied.api.api.domain.Audit
-import com.codepied.api.api.exception.ErrorCode
+import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
@@ -43,7 +43,7 @@ interface EmailTemplateRepository : JpaRepository<EmailTemplate, Long> {
 
 fun EmailTemplateRepository.getByType(type: EmailTemplateType) : EmailTemplate {
     return this.findByType(type) ?: throwInvalidRequest(
-        errorCode = ErrorCode.NO_RESOURCE_ERROR,
+        errorCode = BusinessErrorCode.NO_RESOURCE_ERROR,
         debugMessage = "no email template error",
         httpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
     )

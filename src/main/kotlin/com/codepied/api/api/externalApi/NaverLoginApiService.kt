@@ -1,7 +1,7 @@
 package com.codepied.api.api.externalApi
 
 import com.codepied.api.api.config.NaverSocialLoginProperty
-import com.codepied.api.api.exception.ErrorCode
+import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.invalidRequest
 import com.codepied.api.api.externalApi.dto.NaverLoginTokenResponse
 import com.codepied.api.api.externalApi.dto.NaverLoginUserInfo
@@ -49,7 +49,7 @@ class NaverLoginApiService(
             }
 
         return socialAccount ?: throw invalidRequest(
-            errorCode = ErrorCode.NOT_ACCESSIBLE_SOCIAL_USER_NAVER,
+            errorCode = BusinessErrorCode.NOT_ACCESSIBLE_SOCIAL_USER_NAVER,
             debugMessage = "maybe does not google user.",
             httpStatus = HttpStatus.BAD_REQUEST
         )

@@ -1,11 +1,12 @@
 package com.codepied.api.api.exception
 
-import com.codepied.api.api.CodeEnum
+import com.codepied.api.api.exception.CodepiedBaseException.InvalidRequestException
+import com.codepied.api.api.exception.CodepiedBaseException.ServerException
 import org.springframework.http.HttpStatus
 
 object InvalidRequestExceptionBuilder {
     fun throwInvalidRequest(
-        errorCode: CodeEnum,
+        errorCode: BusinessErrorCode,
         debugMessage: String,
         messageArgs: Array<String> = emptyArray(),
         httpStatus: HttpStatus = HttpStatus.BAD_REQUEST,
@@ -19,7 +20,7 @@ object InvalidRequestExceptionBuilder {
     }
 
     fun invalidRequest(
-        errorCode: CodeEnum,
+        errorCode: BusinessErrorCode,
         debugMessage: String,
         messageArgs: Array<String> = emptyArray(),
         httpStatus: HttpStatus = HttpStatus.BAD_REQUEST,
@@ -30,27 +31,45 @@ object InvalidRequestExceptionBuilder {
         httpStatus = httpStatus,
     )
 
-    fun throwInternalServerError(): Nothing = throwInvalidRequest(
-        errorCode = ErrorCode.INTERNAL_SERVER_ERROR,
+    fun throwUnknownError(): Nothing = throwInvalidRequest(
+        errorCode = BusinessErrorCode.UNKNOWN_ERROR,
         debugMessage = "unknown server error",
         httpStatus = HttpStatus.INTERNAL_SERVER_ERROR
     )
 
     fun throwEnumCodeError(): Nothing = throwInvalidRequest(
-        errorCode = ErrorCode.INVALID_ENUM_CODE_ERROR,
+        errorCode = BusinessErrorCode.INVALID_ENUM_CODE_ERROR,
         debugMessage = "invalid enum input",
         httpStatus = HttpStatus.BAD_REQUEST
     )
 
     fun throwNoSuchUser(): Nothing = throwInvalidRequest(
-        errorCode = ErrorCode.NO_SUCH_USER_LOGIN,
+        errorCode = BusinessErrorCode.NO_SUCH_USER_LOGIN,
         debugMessage = "no such user",
         httpStatus = HttpStatus.BAD_REQUEST
     )
 
     fun throwInvalidPassword() : Nothing = throwInvalidRequest(
-        errorCode = ErrorCode.NOT_MATCHES_PASSWORD_LOGIN_ERROR,
+        errorCode = BusinessErrorCode.NOT_MATCHES_PASSWORD_LOGIN_ERROR,
         debugMessage = "not accessible user",
         httpStatus = HttpStatus.BAD_REQUEST,
     )
+}
+
+object ServerExceptionBuilder {
+    fun serverError(
+        errorCode: ServerErrorCode = ServerErrorCode.INTERNAL_SERVER_ERROR,
+        debugMessage: String,
+        messageArgs: Array<String> = emptyArray(),
+        httpStatus: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+    ): ServerException {
+        return ServerException(
+            errorCode = errorCode,
+            debugMessage = debugMessage,
+            messageArgs = messageArgs,
+            httpStatus = httpStatus
+        )
+    }
+
+    fun throwInternalServerError(): Nothing = throw serverError(debugMessage = "internal server error")
 }

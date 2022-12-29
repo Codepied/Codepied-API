@@ -1,6 +1,6 @@
 package com.codepied.api.api.security.application
 
-import com.codepied.api.endpoint.dto.EmailUserCreate
+import com.codepied.api.user.dto.EmailUserCreate
 import com.codepied.api.user.dto.EmailUserLogin
 import java.util.UUID
 
