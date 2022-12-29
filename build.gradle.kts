@@ -16,7 +16,7 @@ plugins {
 
 group = "com.codepied"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_16
 
 configurations {
     compileOnly {
@@ -74,7 +74,7 @@ allOpen {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
+        jvmTarget = "16"
     }
 }
 
@@ -133,9 +133,11 @@ tasks {
         from(asciidoctor.get().outputDir) {
             into("BOOT-INF/classes/static/docs")
         }
+
+        this.archiveFileName.set("codepied.jar")
     }
 
     processResources {
-        duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 }
