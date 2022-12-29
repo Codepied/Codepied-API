@@ -1,7 +1,7 @@
 package com.codepied.api.api.security
 
+import com.codepied.api.api.exception.CodepiedBaseException
 import com.codepied.api.api.exception.ExceptionController
-import com.codepied.api.api.exception.InvalidRequestException
 import com.codepied.api.api.http.RequestContext
 import com.codepied.api.api.security.application.JwtService
 import com.codepied.api.api.security.dto.JwtAuthExcludeUrlPattern
@@ -40,7 +40,7 @@ class JwtAuthFilter(
             SecurityContextHolder.getContext().authentication = authentication
 
             filterChain.doFilter(request, response)
-        } catch (e: InvalidRequestException) {
+        } catch (e: CodepiedBaseException.InvalidRequestException) {
             response.contentType = "application/json"
             response.characterEncoding = "UTF-8"
             response.writer.write(objectMapper.writeValueAsString(exceptionController.invalidRequestException(e)))

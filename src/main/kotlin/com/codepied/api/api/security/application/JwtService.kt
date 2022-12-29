@@ -3,8 +3,9 @@ package com.codepied.api.api.security.application
 import com.codepied.api.api.ObjectMapperHolder
 import com.codepied.api.api.TimeService
 import com.codepied.api.api.config.JwtProperty
-import com.codepied.api.api.exception.ErrorCode
+import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
+import com.codepied.api.api.exception.ServerExceptionBuilder.throwInternalServerError
 import com.codepied.api.api.security.dto.PrincipalDetails
 import com.codepied.api.user.domain.User
 import com.fasterxml.jackson.core.type.TypeReference
@@ -59,23 +60,19 @@ class JwtService(
                 .body
         } catch (e: ExpiredJwtException) {
             throwInvalidRequest(
-                errorCode = ErrorCode.ACCESS_TOKEN_EXPIRED,
+                errorCode = BusinessErrorCode.ACCESS_TOKEN_EXPIRED,
                 debugMessage = "access token expired",
             )
         } catch (e: Exception) {
             when(e) {
                 is UnsupportedJwtException, is MalformedJwtException -> {
                     throwInvalidRequest(
-                        errorCode = ErrorCode.INVALID_ACCESS_TOKEN,
+                        errorCode = BusinessErrorCode.INVALID_ACCESS_TOKEN,
                         debugMessage = "Invalid access token was used ",
                     )
                 }
-                else -> {
-                    throwInvalidRequest(
-                        errorCode = ErrorCode.INTERNAL_SERVER_ERROR,
-                        debugMessage = "unknown error during jwt parsing",
-                    )
-                }
+
+                else -> throwInternalServerError()
             }
         }
     }

@@ -2,9 +2,9 @@ package com.codepied.api.user.domain
 
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.dto.PrincipalDetails
-import com.codepied.api.domain.UserRoleFactory
 import com.codepied.api.test.MockStore.createOneUser
 import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityManager
 
 @SpringBootTest
+@Disabled
 class UserRepositoryTest {
     @Autowired
     private lateinit var repository: UserRepository

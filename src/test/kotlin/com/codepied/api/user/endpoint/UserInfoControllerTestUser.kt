@@ -1,6 +1,6 @@
 package com.codepied.api.user.endpoint
 
-import com.codepied.api.api.exception.ErrorCode
+import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.test.DocumentEnum
 import com.codepied.api.test.RestDocStore
 import com.codepied.api.user.dto.UserDataDuplicateType
@@ -58,7 +58,7 @@ class UserInfoControllerTestUser : AbstractUserEndpointTest("/api/users/info") {
 
         // * then
         perform.andExpect(status().is4xxClientError)
-            .andExpect(jsonPath("$.errorCode").value(ErrorCode.INVALID_ENUM_CODE_ERROR.name))
+            .andExpect(jsonPath("$.errorCode").value(BusinessErrorCode.INVALID_ENUM_CODE_ERROR.name))
     }
 
     @Test

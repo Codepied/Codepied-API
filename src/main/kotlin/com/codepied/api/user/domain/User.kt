@@ -1,12 +1,10 @@
 package com.codepied.api.user.domain
 
 import com.codepied.api.api.domain.Audit
-import com.codepied.api.api.exception.ErrorCode
+import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.invalidRequest
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.SocialType
-import com.codepied.api.domain.UserRole
-import com.codepied.api.domain.UserRoleFactory
 import com.codepied.api.user.domain.QSocialUserIdentification.socialUserIdentification
 import com.codepied.api.user.domain.QUser.user as  userAlias
 import com.codepied.api.user.domain.QUserCredential.userCredential
@@ -65,7 +63,7 @@ class User(
 }
 
 object UserFactory {
-    fun createUser(email: String, roleTypes: List<RoleType>, activateStatus: ActivateStatus): User {
+    fun createUser(roleTypes: List<RoleType>, activateStatus: ActivateStatus): User {
         val user = User(
             id = 0L,
             activateStatus = activateStatus
@@ -81,7 +79,7 @@ interface UserRepository : JpaRepository<User, Long>, UserQueryRepository {
 fun UserRepository.getUserById(id: Long): User {
     return this.findById(id).orElseThrow {
         invalidRequest(
-            errorCode = ErrorCode.INVALID_ACCESS_USER,
+            errorCode = BusinessErrorCode.INVALID_ACCESS_USER,
             debugMessage = "no found user")
     }
 }
