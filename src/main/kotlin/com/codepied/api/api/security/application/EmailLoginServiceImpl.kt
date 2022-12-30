@@ -3,8 +3,7 @@ package com.codepied.api.api.security.application
 import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidPassword
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
-import com.codepied.api.api.mailing.application.AwsMailingService
-import com.codepied.api.api.mailing.dto.EmailSignupAuthorizationValues
+import com.codepied.api.api.mailing.event.SignupEmailAuthorizationEvent
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.SocialType
 import com.codepied.api.api.security.event.LoginEvent
@@ -35,7 +34,7 @@ class EmailLoginServiceImpl(
     private val userCredentialRepository: UserCredentialRepository,
     private val userDetailsRepository: UserDetailsRepository,
     private val emailSignupAuthorizationRequestRepository: EmailSignupAuthorizationRequestRepository,
-    private val mailingService: AwsMailingService,
+    private val publishEventPublisher: ApplicationEventPublisher,
     private val jwtService: JwtService,
     private val eventPublisher: ApplicationEventPublisher,
 ): EmailLoginService {
@@ -114,9 +113,9 @@ class EmailLoginServiceImpl(
         emailSignupAuthorizationRequestRepository.save(auth)
 
         // * send mail (async process)
-        mailingService.sendSignupAuthorizationEmail(EmailSignupAuthorizationValues(
+        publishEventPublisher.publishEvent(SignupEmailAuthorizationEvent(
             to = request.email,
-            uri = "https://www.codepied.com/signup/auth/${auth.uuid}"
+            uri = "https://www.codepied.com/auth/signup/${auth.uuid}"
         ))
 
         return LoginInfoImpl(

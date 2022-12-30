@@ -3,12 +3,11 @@ package com.codepied.api.api.mailing.application
 import com.codepied.api.api.mailing.domain.EmailTemplate
 import com.codepied.api.api.mailing.domain.EmailTemplateRepository
 import com.codepied.api.api.mailing.domain.EmailTemplateType
-import com.codepied.api.api.mailing.domain.getByType
-import com.codepied.api.api.mailing.dto.EmailSignupAuthorizationValues
-import com.codepied.api.api.mailing.dto.EmailTemplateValues
-import com.codepied.api.api.mailing.dto.content
-import org.springframework.scheduling.annotation.Async
+import com.codepied.api.api.mailing.dto.EmailTemplateEvent
+import com.codepied.api.api.mailing.event.SignupEmailAuthorizationEvent
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 import software.amazon.awssdk.services.ses.SesAsyncClient
 import software.amazon.awssdk.services.ses.model.*
 
@@ -19,14 +18,14 @@ class AwsMailingService(
 ) {
     private val from: String = "noreply@codepied.com"
 
-    @Async
-    fun sendSignupAuthorizationEmail(values: EmailSignupAuthorizationValues) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    fun sendSignupAuthorizationEmail(values: SignupEmailAuthorizationEvent) {
         val template = emailTemplateRepository.getByType(EmailTemplateType.EMAIL_SIGNUP_AUTHORIZATION)
 
         sendEmail(values, template)
     }
 
-    private fun sendEmail(values: EmailTemplateValues, template: EmailTemplate) {
+    private fun sendEmail(values: EmailTemplateEvent, template: EmailTemplate) {
         val destination = Destination.builder()
             .toAddresses(values.to())
             .build()
