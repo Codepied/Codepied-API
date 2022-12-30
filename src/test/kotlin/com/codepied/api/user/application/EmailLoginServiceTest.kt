@@ -1,11 +1,14 @@
 package com.codepied.api.user.application
 
+import com.codepied.api.api.TimeService
+import com.codepied.api.api.domain.Audit
 import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.CodepiedBaseException.InvalidRequestException
 import com.codepied.api.api.mailing.event.SignupEmailAuthorizationEvent
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.application.EmailLoginServiceImpl
 import com.codepied.api.api.security.application.JwtService
+import com.codepied.api.api.security.dto.EmailLoginInfoImpl
 import com.codepied.api.api.security.event.LoginEvent
 import com.codepied.api.test.AbstractServiceTest
 import com.codepied.api.user.domain.*
@@ -24,6 +27,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.password.PasswordEncoder
+import java.time.ZonedDateTime
 
 class EmailLoginServiceTest : AbstractServiceTest() {
     @Mock
@@ -42,6 +46,8 @@ class EmailLoginServiceTest : AbstractServiceTest() {
     private lateinit var jwtService: JwtService
     @Mock
     private lateinit var eventPublisher: ApplicationEventPublisher
+    @Mock
+    private lateinit var timeService: TimeService
 
     @InjectMocks
     private lateinit var service: EmailLoginServiceImpl
@@ -128,9 +134,14 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         val userDetails = Mockito.mock(UserDetails::class.java)
         val userCredential = Mockito.mock(UserCredential::class.java)
         val user = Mockito.mock(User::class.java)
+        val credentialAudit = Mockito.mock(Audit::class.java)
+        val now = ZonedDateTime.now()
+
         doReturn(user).`when`(userDetails).user
         doReturn("nickname").`when`(userDetails).nickname
         doReturn("encodedPw").`when`(userCredential).password
+        doReturn(credentialAudit).`when`(userCredential).audit
+        doReturn(now.minusDays(100).toLocalDateTime()).`when`(credentialAudit).lastModifiedAt
         doReturn(Pair(userDetails, userCredential)).`when`(userRepository).findEmailUser(anyString())
         doReturn(ActivateStatus.ACTIVATED).`when`(user).activateStatus
         doReturn(1L).`when`(user).id
@@ -139,11 +150,16 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         doReturn("refresh_token").`when`(jwtService).generateRefreshToken(any())
         lenient().doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
 
+        doReturn(now).`when`(timeService).now()
+
         // * when
         val loginInfo = service.login(request)
 
         // * then
         assertThat(loginInfo).isNotNull
+        assertThat(loginInfo is EmailLoginInfoImpl).isTrue
+        val info = loginInfo as EmailLoginInfoImpl
+        assertThat(info.passwordChangeRecommended).isTrue
     }
 
     @Test

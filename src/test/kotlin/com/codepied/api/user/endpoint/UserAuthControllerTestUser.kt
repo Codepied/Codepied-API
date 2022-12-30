@@ -1,7 +1,8 @@
 package com.codepied.api.user.endpoint
 
 import com.codepied.api.api.security.SocialType
-import com.codepied.api.api.security.application.LoginInfoImpl
+import com.codepied.api.api.security.dto.EmailLoginInfoImpl
+import com.codepied.api.api.security.dto.LoginInfoImpl
 import com.codepied.api.test.DocumentEnum
 import com.codepied.api.test.RestDocStore
 import org.junit.jupiter.api.Test
@@ -50,17 +51,17 @@ class UserAuthControllerTestUser : AbstractUserEndpointTest("/api/users/auths") 
         perform.andExpect(status().isCreated)
                 .andExpect(jsonPath("$.data.userKey").isNumber)
                 .andDo(document(DocumentEnum.EMAIL_SIGNUP.name, requestFields(
-                        fieldWithPath("email").type("String").description("user email"),
-                        fieldWithPath("password").type("String").description("user password"),
-                        fieldWithPath("nickname").type("String").description("user nickname"),
+                    fieldWithPath("email").type("String").description("user email"),
+                    fieldWithPath("password").type("String").description("user password"),
+                    fieldWithPath("nickname").type("String").description("user nickname"),
                 ), RestDocStore.responseSnippet(
-                        fieldWithPath("data").type("LoginInfo").description("login information"),
-                        fieldWithPath("data.userKey").type("Long").description("userKey"),
-                        fieldWithPath("data.accessToken").type("String").description("JWT, but empty"),
-                        fieldWithPath("data.refreshToken").type("String").description("JWT, but empty"),
-                        fieldWithPath("data.nickname").type("String").description("user nickname"),
-                        fieldWithPath("data.userProfile").type("String?").description("user profile").optional(),
-                        fieldWithPath("data.email").type("String").description("user email"),
+                    fieldWithPath("data").type("LoginInfo").description("login information"),
+                    fieldWithPath("data.userKey").type("Long").description("userKey"),
+                    fieldWithPath("data.accessToken").type("String").description("JWT, but empty"),
+                    fieldWithPath("data.refreshToken").type("String").description("JWT, but empty"),
+                    fieldWithPath("data.nickname").type("String").description("user nickname"),
+                    fieldWithPath("data.userProfile").type("String?").description("user profile").optional(),
+                    fieldWithPath("data.email").type("String").description("user email"),
                 )))
     }
 
@@ -68,41 +69,43 @@ class UserAuthControllerTestUser : AbstractUserEndpointTest("/api/users/auths") 
     fun `이메일 로그인 성공`() {
         // * given
         doReturn(
-            LoginInfoImpl(
+            EmailLoginInfoImpl(
                 userKey = 1L,
                 accessToken = "oghoqr320jftg[0awifdjfoiemacvzkz.fiowefma.zdfiefas",
                 refreshToken = "o323mf2iofa.foi3jfm;a.ifjawoeif",
                 nickname = "test_nickname",
                 userProfile = null,
-                email = "test@test.com"
-        )
-        ).`when`(emailLoginService).login(any())
+                email = "test@test.com",
+                passwordChangeRecommended = true,
+        )).`when`(emailLoginService).login(any())
 
         // * when
         val perform = mockMvc.perform(post("$uri/login")
-                .param("type", "EMAIL")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content("""{
-                    "email": "test@test.com",
-                    "password": "password_test"
-                }""".trimIndent()))
+            .param("type", "EMAIL")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(
+                """{
+                "email": "test@test.com",
+                "password": "password_test"
+            }""".trimIndent()))
 
         // * then
         perform.andExpect(status().isOk)
                 .andExpect(jsonPath("$.data.userKey").isNumber)
                 .andDo(
                     document(DocumentEnum.EMAIL_LOGIN.name, requestFields(
-                            fieldWithPath("email").type("String").description("user email"),
-                            fieldWithPath("password").type("String").description("user password"),
+                        fieldWithPath("email").type("String").description("user email"),
+                        fieldWithPath("password").type("String").description("user password"),
                     ), RestDocStore.responseSnippet(
-                            fieldWithPath("data").type("LoginInfo").description("login information"),
-                            fieldWithPath("data.userKey").type("Long").description("userKey"),
-                            fieldWithPath("data.accessToken").type("String").description("access JWT"),
-                            fieldWithPath("data.refreshToken").type("String").description("refresh JWT"),
-                            fieldWithPath("data.nickname").type("String").description("user nickname"),
-                            fieldWithPath("data.userProfile").type("String?").description("user profile").optional(),
-                            fieldWithPath("data.email").type("String").description("user email"),
+                        fieldWithPath("data").type("LoginInfo").description("login information"),
+                        fieldWithPath("data.userKey").type("Long").description("userKey"),
+                        fieldWithPath("data.accessToken").type("String").description("access JWT"),
+                        fieldWithPath("data.refreshToken").type("String").description("refresh JWT"),
+                        fieldWithPath("data.nickname").type("String").description("user nickname"),
+                        fieldWithPath("data.userProfile").type("String?").description("user profile").optional(),
+                        fieldWithPath("data.email").type("String").description("user email"),
+                        fieldWithPath("data.passwordChangeRecommended").type("Boolean").description("패스워드 변경 권장여부"),
                     )),
                 )
     }

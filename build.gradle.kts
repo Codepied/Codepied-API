@@ -69,6 +69,7 @@ dependencies {
 
 allOpen {
     annotation("javax.persistence.Entity")
+    annotation("javax.persistence.Embeddable")
 }
 
 tasks.withType<KotlinCompile> {
