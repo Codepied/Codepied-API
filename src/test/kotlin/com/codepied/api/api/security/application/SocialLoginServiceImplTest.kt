@@ -1,19 +1,14 @@
 package com.codepied.api.api.security.application
 
-import com.codepied.api.api.exception.ErrorCode
-import com.codepied.api.api.exception.InvalidRequestException
+import com.codepied.api.api.exception.BusinessErrorCode
+import com.codepied.api.api.exception.CodepiedBaseException.InvalidRequestException
 import com.codepied.api.api.externalApi.SocialLoginApiService
 import com.codepied.api.api.externalApi.dto.SocialAccountImpl
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.SocialType
 import com.codepied.api.api.security.event.LoginEvent
-import com.codepied.api.user.domain.UserFactory
-import com.codepied.api.user.domain.UserRepository
 import com.codepied.api.test.AbstractServiceTest
-import com.codepied.api.user.domain.ActivateStatus
-import com.codepied.api.user.domain.SocialUserIdentificationRepository
-import com.codepied.api.user.domain.UserDetailsFactory
-import com.codepied.api.user.domain.UserDetailsRepository
+import com.codepied.api.user.domain.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
@@ -52,7 +47,7 @@ class SocialLoginServiceImplTest : AbstractServiceTest() {
             email = "test@gmail.com"
         )
 
-        val user = UserFactory.createUser(socialAccount.email(), listOf(RoleType.USER), ActivateStatus.ACTIVATED)
+        val user = UserFactory.createUser(listOf(RoleType.USER), ActivateStatus.ACTIVATED)
         doReturn(user).`when`(userRepository).save(any())
 
         val userDetails = UserDetailsFactory.create("유동-${UUID.randomUUID()}", user)
@@ -108,7 +103,7 @@ class SocialLoginServiceImplTest : AbstractServiceTest() {
         val authorizationCode = "authorization code"
         doReturn(socialAccount).`when`(externalApiService).loginAuthorization(eq(socialType), eq(authorizationCode))
 
-        val user = UserFactory.createUser(socialAccount.email(), listOf(RoleType.USER), ActivateStatus.ACTIVATED)
+        val user = UserFactory.createUser(listOf(RoleType.USER), ActivateStatus.ACTIVATED)
         user.addSocialIdentification(socialAccount.socialIdentification(), socialType, socialAccount.email())
         doReturn(user.socialIdentifications[0]).`when`(socialUserIdentificationRepository).findBySocialTypeAndSocialIdentification(
             eq(socialType),
@@ -145,7 +140,7 @@ class SocialLoginServiceImplTest : AbstractServiceTest() {
         val authorizationCode = "authorization code"
         doReturn(socialAccount).`when`(externalApiService).loginAuthorization(eq(socialType), eq(authorizationCode))
 
-        val user = UserFactory.createUser(socialAccount.email(), listOf(RoleType.USER), ActivateStatus.ACTIVATED)
+        val user = UserFactory.createUser(listOf(RoleType.USER), ActivateStatus.ACTIVATED)
         user.addSocialIdentification(socialAccount.socialIdentification(), socialType, socialAccount.email())
         doReturn(user.socialIdentifications[0]).`when`(socialUserIdentificationRepository).findBySocialTypeAndSocialIdentification(
             eq(socialType),
@@ -160,6 +155,6 @@ class SocialLoginServiceImplTest : AbstractServiceTest() {
         // * then
         assertThat(throwable is InvalidRequestException).isTrue
         val exception = throwable as InvalidRequestException
-        assertThat(exception.errorCode).isEqualTo(ErrorCode.NO_SUCH_USER_LOGIN_ERROR)
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.NO_SUCH_USER_LOGIN_ERROR)
     }
 }

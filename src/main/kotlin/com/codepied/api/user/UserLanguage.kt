@@ -1,7 +1,7 @@
-package com.codepied.api.domain
+package com.codepied.api.user
 
 import com.codepied.api.api.domain.Audit
-import com.codepied.api.api.exception.ErrorCode
+import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.http.SupportLanguage
 import com.codepied.api.user.domain.User
@@ -43,7 +43,7 @@ object UserLanguageFactory {
     ): UserLanguage {
         if (user.id == 0L) {
             throwInvalidRequest(
-                errorCode = ErrorCode.INTERNAL_SERVER_ERROR,
+                errorCode = BusinessErrorCode.UNKNOWN_ERROR,
                 debugMessage = "signup fail due to support language (actually zero case)"
             )
         }
@@ -60,7 +60,7 @@ interface UserLanguageRepository : JpaRepository<UserLanguage, Long> {
 
 fun UserLanguageRepository.getLangById(id: Long): UserLanguage {
     return this.findById(id).orElseThrow { throwInvalidRequest(
-        errorCode = ErrorCode.NO_RESOURCE_ERROR,
+        errorCode = BusinessErrorCode.NO_RESOURCE_ERROR,
         debugMessage = "no user language (actually zero case)"
     ) }
 }

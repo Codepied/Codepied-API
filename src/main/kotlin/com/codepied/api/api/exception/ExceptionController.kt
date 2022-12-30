@@ -1,5 +1,6 @@
 package com.codepied.api.api.exception
 
+import com.codepied.api.api.exception.CodepiedBaseException.ServerException
 import com.codepied.api.api.http.RequestContext
 import com.codepied.api.api.http.FailResponse
 import com.codepied.api.api.http.FailResponseFactory
@@ -31,9 +32,9 @@ class ExceptionController(
     /**
      * exception handling: exception for invalid data processing
      */
-    @ExceptionHandler(InvalidRequestException::class)
+    @ExceptionHandler(CodepiedBaseException.InvalidRequestException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    fun invalidRequestException(e: InvalidRequestException): FailResponse {
+    fun invalidRequestException(e: CodepiedBaseException.InvalidRequestException): FailResponse {
         log.info(e.debugMessage)
 
         val localeMessage = getMessage(e.errorCode.getCodeValue(), e.messageArgs, requestContext.supportLanguage.locale)
@@ -58,7 +59,7 @@ class ExceptionController(
         val errorCode = if (fieldErrors.isNotEmpty()) {
             ParameterErrorCode.matches(e.fieldErrors[0].defaultMessage)
         } else {
-            ErrorCode.INTERNAL_SERVER_ERROR
+            ServerErrorCode.INTERNAL_SERVER_ERROR
         }
 
         val localeMessage = getMessage(errorCode.getCodeValue(), emptyArray(), requestContext.supportLanguage.locale)
@@ -72,12 +73,28 @@ class ExceptionController(
         )
     }
 
+    @ExceptionHandler(ServerException::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    fun internalServerError(e: ServerException): FailResponse {
+        log.info(e.debugMessage)
+
+        val localeMessage = getMessage(e.errorCode.getCodeValue(), e.messageArgs, requestContext.supportLanguage.locale)
+
+        return FailResponseFactory.create(
+            e = e,
+            localeMessage = localeMessage,
+            supportLanguage = requestContext.supportLanguage,
+            httpStatus = e.httpStatus,
+            now = LocalDateTime.now()
+        )
+    }
+
     private fun getMessage(codeValue: String, args: Array<String>?, locale: Locale): String {
         return try {
             messageSource.getMessage(codeValue, args, locale)
         } catch (e: NoSuchMessageException) {
             messageSource.getMessage(
-                ErrorCode.INTERNAL_SERVER_ERROR.getCodeValue(),
+                ServerErrorCode.INTERNAL_SERVER_ERROR.getCodeValue(),
                 emptyArray(),
                 requestContext.supportLanguage.locale
             )

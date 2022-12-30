@@ -1,4 +1,4 @@
-package com.codepied.api.endpoint.dto
+package com.codepied.api.user.dto
 
 import com.codepied.api.api.http.SupportLanguage
 import java.util.Locale

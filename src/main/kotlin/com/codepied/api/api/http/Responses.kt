@@ -1,7 +1,9 @@
 package com.codepied.api.api.http
 
-import com.codepied.api.api.exception.ErrorCode
-import com.codepied.api.api.exception.InvalidRequestException
+import com.codepied.api.api.exception.BusinessErrorCode
+import com.codepied.api.api.exception.CodepiedBaseException.InvalidRequestException
+import com.codepied.api.api.exception.CodepiedBaseException.ServerException
+import com.codepied.api.api.exception.ServerErrorCode
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -39,7 +41,7 @@ class SuccessResponse<T>(
  * @author Aivyss
  */
 class FailResponse(
-    val errorCode: String = ErrorCode.INTERNAL_SERVER_ERROR.getNameValue(),
+    val errorCode: String = BusinessErrorCode.UNKNOWN_ERROR.getNameValue(),
     val interfaceMessage: String,
     supportLanguage: SupportLanguage,
     responseTime: LocalDateTime,
@@ -75,7 +77,23 @@ object FailResponseFactory {
     }
 
     fun create(
-        errorCode: String = ErrorCode.INTERNAL_SERVER_ERROR.getNameValue(),
+        e: ServerException,
+        localeMessage: String,
+        httpStatus: HttpStatus = HttpStatus.BAD_REQUEST,
+        supportLanguage: SupportLanguage,
+        now: LocalDateTime,
+    ): FailResponse {
+        return FailResponse(
+            errorCode = e.errorCode.getNameValue(),
+            interfaceMessage = localeMessage,
+            supportLanguage = supportLanguage,
+            responseTime = now,
+            httpStatus = httpStatus
+        )
+    }
+
+    fun create(
+        errorCode: String = ServerErrorCode.INTERNAL_SERVER_ERROR.getNameValue(),
         localeMessage: String,
         httpStatus: HttpStatus = HttpStatus.BAD_REQUEST,
         supportLanguage: SupportLanguage,

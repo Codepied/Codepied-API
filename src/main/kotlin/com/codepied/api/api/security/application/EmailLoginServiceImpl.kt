@@ -1,6 +1,6 @@
 package com.codepied.api.api.security.application
 
-import com.codepied.api.api.exception.ErrorCode
+import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidPassword
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.mailing.application.AwsMailingService
@@ -11,7 +11,7 @@ import com.codepied.api.api.security.event.LoginEvent
 import com.codepied.api.api.security.event.LoginStatus
 import com.codepied.api.user.domain.UserFactory
 import com.codepied.api.user.domain.UserRepository
-import com.codepied.api.endpoint.dto.EmailUserCreate
+import com.codepied.api.user.dto.EmailUserCreate
 import com.codepied.api.user.domain.*
 import com.codepied.api.user.dto.EmailUserLogin
 import org.springframework.context.ApplicationEventPublisher
@@ -42,7 +42,7 @@ class EmailLoginServiceImpl(
     override fun login(request: EmailUserLogin): LoginInfo {
         val email = request.email
         val userInfo = userRepository.findEmailUser(email) ?: throwInvalidRequest(
-            errorCode = ErrorCode.NO_SUCH_USER_LOGIN_ERROR,
+            errorCode = BusinessErrorCode.NO_SUCH_USER_LOGIN_ERROR,
             debugMessage = "not accessible user",
             httpStatus = HttpStatus.BAD_REQUEST,
         )
@@ -51,7 +51,7 @@ class EmailLoginServiceImpl(
             eventPublisher.publishEvent(LoginEvent(userInfo.first.user.id, LoginStatus.EMAIL_AUTHORIZATION_FAIL))
 
             throwInvalidRequest(
-                errorCode = ErrorCode.NOT_AUTHORIZED_EMAIL_USER,
+                errorCode = BusinessErrorCode.NOT_AUTHORIZED_EMAIL_USER,
                 debugMessage = "not accessible user",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
@@ -77,7 +77,7 @@ class EmailLoginServiceImpl(
         // * email validation
         if (userRepository.existsEmail(request.email)) {
             throwInvalidRequest(
-                errorCode = ErrorCode.DUPLICATED_EMAIL_SIGNUP,
+                errorCode = BusinessErrorCode.DUPLICATED_EMAIL_SIGNUP,
                 debugMessage = "already exist email",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
@@ -86,7 +86,7 @@ class EmailLoginServiceImpl(
         // * nickname validation
         if (userRepository.existsNickname(request.nickname)) {
             throwInvalidRequest(
-                errorCode = ErrorCode.DUPLICATED_NICKNAME,
+                errorCode = BusinessErrorCode.DUPLICATED_NICKNAME,
                 debugMessage = "already exist email",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )
@@ -95,7 +95,7 @@ class EmailLoginServiceImpl(
         val encodedPw = passwordEncoder.encode(request.password)
 
         // * create user
-        val user = UserFactory.createUser(request.email, listOf(RoleType.USER), ActivateStatus.NOT_AUTHORIZED_BY_EMAIL)
+        val user = UserFactory.createUser(listOf(RoleType.USER), ActivateStatus.NOT_AUTHORIZED_BY_EMAIL)
         userRepository.save(user)
 
         // * create social type

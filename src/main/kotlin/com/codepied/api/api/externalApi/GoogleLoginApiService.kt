@@ -1,7 +1,7 @@
 package com.codepied.api.api.externalApi
 
 import com.codepied.api.api.config.GoogleSocialLoginProperty
-import com.codepied.api.api.exception.ErrorCode
+import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.invalidRequest
 import com.codepied.api.api.externalApi.dto.GoogleLoginData
 import com.codepied.api.api.security.dto.SocialAccount
@@ -32,7 +32,7 @@ class GoogleLoginApiService(
             }.block()
 
         return loginData?.create() ?: throw invalidRequest(
-            errorCode = ErrorCode.NOT_ACCESSIBLE_SOCIAL_USER_GOOGLE,
+            errorCode = BusinessErrorCode.NOT_ACCESSIBLE_SOCIAL_USER_GOOGLE,
             debugMessage = "maybe does not google user.",
             httpStatus = HttpStatus.BAD_REQUEST)
     }

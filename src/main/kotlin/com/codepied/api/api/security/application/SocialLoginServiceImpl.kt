@@ -1,6 +1,6 @@
 package com.codepied.api.api.security.application
 
-import com.codepied.api.api.exception.ErrorCode
+import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.externalApi.SocialLoginApiService
 import com.codepied.api.api.role.RoleType
@@ -31,7 +31,7 @@ class SocialLoginServiceImpl(
     private val eventPublisher: ApplicationEventPublisher,
 ): SocialLoginService {
     override fun signup(socialType: SocialType, socialAccount: SocialAccount): LoginInfo {
-        val user = UserFactory.createUser(socialAccount.email(), listOf(RoleType.USER), ActivateStatus.ACTIVATED)
+        val user = UserFactory.createUser(listOf(RoleType.USER), ActivateStatus.ACTIVATED)
         user.addSocialIdentification(socialAccount.socialIdentification(), socialType, socialAccount.email())
         userRepository.save(user)
 
@@ -62,7 +62,7 @@ class SocialLoginServiceImpl(
         } else {
             val user = socialIdentification.user
             val userDetails = userDetailsRepository.findByUser(user) ?: throwInvalidRequest(
-                errorCode = ErrorCode.NO_SUCH_USER_LOGIN_ERROR,
+                errorCode = BusinessErrorCode.NO_SUCH_USER_LOGIN_ERROR,
                 debugMessage = "not accessible user",
                 httpStatus = HttpStatus.BAD_REQUEST,
             )

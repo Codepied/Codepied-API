@@ -11,7 +11,7 @@ import java.util.*
 enum class SupportLanguage(val locale: Locale, val languageId: String, val aliases: List<String>) {
     KO(Locale.forLanguageTag("ko"), "ko", listOf("kr", "korea")),
     EN(Locale.forLanguageTag("en"), "en", listOf("us", "gb")),
-    JP(Locale.forLanguageTag("ja"), "ja", listOf("jp", "japan")),
+//    JP(Locale.forLanguageTag("ja"), "ja", listOf("jp", "japan")),
     ;
 
     companion object {

@@ -1,4 +1,4 @@
-package com.codepied.api.endpoint.dto
+package com.codepied.api.user.dto
 
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank

@@ -1,20 +1,17 @@
 package com.codepied.api.user.application
 
-import com.codepied.api.api.exception.ErrorCode
-import com.codepied.api.api.exception.InvalidRequestException
+import com.codepied.api.api.exception.BusinessErrorCode
+import com.codepied.api.api.exception.CodepiedBaseException.InvalidRequestException
 import com.codepied.api.api.mailing.application.AwsMailingService
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.application.EmailLoginServiceImpl
 import com.codepied.api.api.security.application.JwtService
-import com.codepied.api.api.security.event.LoginEvent
-import com.codepied.api.user.domain.User
-import com.codepied.api.user.domain.UserFactory
-import com.codepied.api.user.domain.UserRepository
-import com.codepied.api.endpoint.dto.EmailUserCreate
+import com.codepied.api.user.dto.EmailUserCreate
 import com.codepied.api.test.AbstractServiceTest
 import com.codepied.api.user.domain.*
 import com.codepied.api.user.dto.EmailUserLogin
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
@@ -61,7 +58,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         doReturn(false).`when`(userRepository).existsEmail(eq(request.email))
         doReturn(false).`when`(userRepository).existsNickname(eq(request.nickname))
         doReturn(encodedPw).`when`(passwordEncoder).encode(eq(request.password))
-        val user = UserFactory.createUser(request.email, listOf(RoleType.USER), ActivateStatus.NOT_AUTHORIZED_BY_EMAIL)
+        val user = UserFactory.createUser(listOf(RoleType.USER), ActivateStatus.NOT_AUTHORIZED_BY_EMAIL)
         doReturn(user)
             .`when`(userRepository).save(any())
         val userDetails = UserDetailsFactory.create(request.nickname, user)
@@ -95,7 +92,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         // * then
         assertThat(throwable is InvalidRequestException).isTrue
         val exception = throwable as InvalidRequestException
-        assertThat(exception.errorCode).isEqualTo(ErrorCode.DUPLICATED_EMAIL_SIGNUP)
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.DUPLICATED_EMAIL_SIGNUP)
     }
 
     @Test
@@ -116,7 +113,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         // * then
         assertThat(throwable is InvalidRequestException).isTrue
         val exception = throwable as InvalidRequestException
-        assertThat(exception.errorCode).isEqualTo(ErrorCode.DUPLICATED_NICKNAME)
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.DUPLICATED_NICKNAME)
     }
 
     @Test
@@ -164,7 +161,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         // * then
         assertThat(throwable is InvalidRequestException).isTrue
         val exception = throwable as InvalidRequestException
-        assertThat(exception.errorCode).isEqualTo(ErrorCode.NO_SUCH_USER_LOGIN_ERROR)
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.NO_SUCH_USER_LOGIN_ERROR)
     }
 
     @Test
@@ -189,7 +186,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         // * then
         assertThat(throwable is InvalidRequestException).isTrue
         val exception = throwable as InvalidRequestException
-        assertThat(exception.errorCode).isEqualTo(ErrorCode.NOT_AUTHORIZED_EMAIL_USER)
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.NOT_AUTHORIZED_EMAIL_USER)
     }
 
     @Test
@@ -216,6 +213,6 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         // * then
         assertThat(throwable is InvalidRequestException).isTrue
         val exception = throwable as InvalidRequestException
-        assertThat(exception.errorCode).isEqualTo(ErrorCode.NOT_MATCHES_PASSWORD_LOGIN_ERROR)
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.NOT_MATCHES_PASSWORD_LOGIN_ERROR)
     }
 }

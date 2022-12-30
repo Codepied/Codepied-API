@@ -1,7 +1,7 @@
 package com.codepied.api.user.application
 
-import com.codepied.api.api.exception.ErrorCode
-import com.codepied.api.api.exception.InvalidRequestException
+import com.codepied.api.api.exception.BusinessErrorCode
+import com.codepied.api.api.exception.CodepiedBaseException.InvalidRequestException
 import com.codepied.api.api.http.RequestContext
 import com.codepied.api.test.AbstractServiceTest
 import com.codepied.api.test.MockStore.createOneUserCredential
@@ -88,7 +88,7 @@ class UserInfoServiceTest : AbstractServiceTest() {
         // * then
         assertThat(throwable is InvalidRequestException).isTrue
         val exception = throwable as InvalidRequestException
-        assertThat(exception.errorCode).isEqualTo(ErrorCode.NO_SUCH_USER_LOGIN)
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.NO_SUCH_USER_LOGIN)
     }
 
     @Test
@@ -104,7 +104,7 @@ class UserInfoServiceTest : AbstractServiceTest() {
         // * then
         assertThat(throwable is InvalidRequestException).isTrue
         val exception = throwable as InvalidRequestException
-        assertThat(exception.errorCode).isEqualTo(ErrorCode.NOT_MATCHES_PASSWORD_LOGIN_ERROR)
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.NOT_MATCHES_PASSWORD_LOGIN_ERROR)
     }
 
     @Test
@@ -128,6 +128,6 @@ class UserInfoServiceTest : AbstractServiceTest() {
         // * then
         assertThat(throwable is InvalidRequestException).isTrue
         val exception = throwable as InvalidRequestException
-        assertThat(exception.errorCode).isEqualTo(ErrorCode.NO_SUCH_USER_LOGIN)
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.NO_SUCH_USER_LOGIN)
     }
 }
