@@ -7,11 +7,14 @@ import com.codepied.api.api.mailing.application.AwsMailingService
 import com.codepied.api.api.mailing.dto.EmailSignupAuthorizationValues
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.SocialType
+import com.codepied.api.api.security.event.LoginEvent
+import com.codepied.api.api.security.event.LoginStatus
 import com.codepied.api.user.domain.UserFactory
 import com.codepied.api.user.domain.UserRepository
 import com.codepied.api.user.dto.EmailUserCreate
 import com.codepied.api.user.domain.*
 import com.codepied.api.user.dto.EmailUserLogin
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -34,10 +37,10 @@ class EmailLoginServiceImpl(
     private val emailSignupAuthorizationRequestRepository: EmailSignupAuthorizationRequestRepository,
     private val mailingService: AwsMailingService,
     private val jwtService: JwtService,
+    private val eventPublisher: ApplicationEventPublisher,
 ): EmailLoginService {
     override fun login(request: EmailUserLogin): LoginInfo {
         val email = request.email
-
         val userInfo = userRepository.findEmailUser(email) ?: throwInvalidRequest(
             errorCode = BusinessErrorCode.NO_SUCH_USER_LOGIN_ERROR,
             debugMessage = "not accessible user",
@@ -45,6 +48,8 @@ class EmailLoginServiceImpl(
         )
 
         if (userInfo.first.user.activateStatus == ActivateStatus.NOT_AUTHORIZED_BY_EMAIL) {
+            eventPublisher.publishEvent(LoginEvent(userInfo.first.user.id, LoginStatus.EMAIL_AUTHORIZATION_FAIL))
+
             throwInvalidRequest(
                 errorCode = BusinessErrorCode.NOT_AUTHORIZED_EMAIL_USER,
                 debugMessage = "not accessible user",
@@ -53,6 +58,8 @@ class EmailLoginServiceImpl(
         }
 
         if (!passwordEncoder.matches(request.password, userInfo.second.password)) {
+            eventPublisher.publishEvent(LoginEvent(userInfo.first.user.id, LoginStatus.PASSWORD_FAIL))
+
             throwInvalidPassword()
         }
 
@@ -63,7 +70,7 @@ class EmailLoginServiceImpl(
             nickname = userInfo.first.nickname,
             userProfile = null,
             email = request.email,
-        )
+        ).also { eventPublisher.publishEvent(LoginEvent(it.getUserKey())) }
     }
 
     override fun signup(request: EmailUserCreate): LoginInfo {
