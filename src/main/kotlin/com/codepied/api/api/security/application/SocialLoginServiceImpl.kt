@@ -6,6 +6,7 @@ import com.codepied.api.api.externalApi.SocialLoginApiService
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.dto.SocialAccount
 import com.codepied.api.api.security.SocialType
+import com.codepied.api.api.security.event.LoginEvent
 import com.codepied.api.user.domain.User
 import com.codepied.api.user.domain.UserFactory
 import com.codepied.api.user.domain.UserRepository
@@ -13,6 +14,7 @@ import com.codepied.api.user.domain.ActivateStatus
 import com.codepied.api.user.domain.SocialUserIdentificationRepository
 import com.codepied.api.user.domain.UserDetailsFactory
 import com.codepied.api.user.domain.UserDetailsRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -26,6 +28,7 @@ class SocialLoginServiceImpl(
     private val userDetailsRepository: UserDetailsRepository,
     private val userRepository: UserRepository,
     private val jwtService: JwtService,
+    private val eventPublisher: ApplicationEventPublisher,
 ): SocialLoginService {
     override fun signup(socialType: SocialType, socialAccount: SocialAccount): LoginInfo {
         val user = UserFactory.createUser(socialAccount.email(), listOf(RoleType.USER), ActivateStatus.ACTIVATED)
@@ -54,7 +57,7 @@ class SocialLoginServiceImpl(
             )
 
         // * signup
-        return if (socialIdentification == null) {
+        return (if (socialIdentification == null) {
             this.signup(socialType, socialAccount)
         } else {
             val user = socialIdentification.user
@@ -72,7 +75,7 @@ class SocialLoginServiceImpl(
                 userProfile = null,
                 email = socialIdentification.email,
             )
-        }
+        }).also { eventPublisher.publishEvent(LoginEvent(it.getUserKey())) }
     }
 
     override fun logout(socialType: SocialType, authorizationCode: String, user: User) {

@@ -6,6 +6,7 @@ import com.codepied.api.api.externalApi.SocialLoginApiService
 import com.codepied.api.api.externalApi.dto.SocialAccountImpl
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.SocialType
+import com.codepied.api.api.security.event.LoginEvent
 import com.codepied.api.user.domain.UserFactory
 import com.codepied.api.user.domain.UserRepository
 import com.codepied.api.test.AbstractServiceTest
@@ -19,8 +20,10 @@ import org.junit.jupiter.api.Test
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import org.springframework.context.ApplicationEventPublisher
 import java.util.*
 
 class SocialLoginServiceImplTest : AbstractServiceTest() {
@@ -34,6 +37,8 @@ class SocialLoginServiceImplTest : AbstractServiceTest() {
     private lateinit var userRepository: UserRepository
     @Mock
     private lateinit var jwtService: JwtService
+    @Mock
+    private lateinit var eventPublisher: ApplicationEventPublisher
 
     @InjectMocks
     private lateinit var service: SocialLoginServiceImpl
@@ -83,6 +88,7 @@ class SocialLoginServiceImplTest : AbstractServiceTest() {
         )
 
         this.`소셜 회원가입 - 성공`()
+        doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
 
         // * when
         val loginInfo = service.login(socialType, authorizationCode)
@@ -116,6 +122,7 @@ class SocialLoginServiceImplTest : AbstractServiceTest() {
         val refreshToken = "refresh token"
         doReturn(accessToken).`when`(jwtService).generateAccessToken(any())
         doReturn(refreshToken).`when`(jwtService).generateRefreshToken(any())
+        doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
 
         // * when
         val loginInfo = service.login(socialType, authorizationCode)

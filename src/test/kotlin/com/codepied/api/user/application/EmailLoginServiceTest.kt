@@ -6,6 +6,7 @@ import com.codepied.api.api.mailing.application.AwsMailingService
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.application.EmailLoginServiceImpl
 import com.codepied.api.api.security.application.JwtService
+import com.codepied.api.api.security.event.LoginEvent
 import com.codepied.api.user.domain.User
 import com.codepied.api.user.domain.UserFactory
 import com.codepied.api.user.domain.UserRepository
@@ -23,6 +24,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.password.PasswordEncoder
 
 class EmailLoginServiceTest : AbstractServiceTest() {
@@ -40,6 +42,8 @@ class EmailLoginServiceTest : AbstractServiceTest() {
     private lateinit var mailingService: AwsMailingService
     @Mock
     private lateinit var jwtService: JwtService
+    @Mock
+    private lateinit var eventPublisher: ApplicationEventPublisher
 
     @InjectMocks
     private lateinit var service: EmailLoginServiceImpl
@@ -135,6 +139,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         doReturn(true).`when`(passwordEncoder).matches(anyString(), anyString())
         doReturn("access_token").`when`(jwtService).generateAccessToken(any())
         doReturn("refresh_token").`when`(jwtService).generateRefreshToken(any())
+        doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
 
         // * when
         val loginInfo = service.login(request)
@@ -175,6 +180,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         val user = Mockito.mock(User::class.java)
         doReturn(user).`when`(userDetails).user
         doReturn(Pair(userDetails, userCredential)).`when`(userRepository).findEmailUser(anyString())
+        doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
         doReturn(ActivateStatus.NOT_AUTHORIZED_BY_EMAIL).`when`(user).activateStatus
 
         // * when
@@ -202,6 +208,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         doReturn(Pair(userDetails, userCredential)).`when`(userRepository).findEmailUser(anyString())
         doReturn(ActivateStatus.ACTIVATED).`when`(user).activateStatus
         doReturn(false).`when`(passwordEncoder).matches(anyString(), anyString())
+        doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
 
         // * when
         val throwable = catchThrowable { service.login(request) }
