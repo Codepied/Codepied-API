@@ -71,5 +71,5 @@ object ServerExceptionBuilder {
         )
     }
 
-    fun throwInternalServerError(): Nothing = throw serverError(debugMessage = "internal server error")
+    fun throwInternalServerError(debugMessage: String = "internal server error"): Nothing = throw serverError(debugMessage = debugMessage)
 }

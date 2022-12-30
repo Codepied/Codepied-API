@@ -2,14 +2,14 @@ package com.codepied.api.user.application
 
 import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.CodepiedBaseException.InvalidRequestException
-import com.codepied.api.api.mailing.application.AwsMailingService
+import com.codepied.api.api.mailing.event.SignupEmailAuthorizationEvent
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.application.EmailLoginServiceImpl
 import com.codepied.api.api.security.application.JwtService
 import com.codepied.api.api.security.event.LoginEvent
-import com.codepied.api.user.dto.EmailUserCreate
 import com.codepied.api.test.AbstractServiceTest
 import com.codepied.api.user.domain.*
+import com.codepied.api.user.dto.EmailUserCreate
 import com.codepied.api.user.dto.EmailUserLogin
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
@@ -18,8 +18,8 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.lenient
 import org.mockito.kotlin.any
-import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.springframework.context.ApplicationEventPublisher
@@ -37,7 +37,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
     @Mock
     private lateinit var emailSignupAuthorizationRequestRepository: EmailSignupAuthorizationRequestRepository
     @Mock
-    private lateinit var mailingService: AwsMailingService
+    private lateinit var publishEventPublisher: ApplicationEventPublisher
     @Mock
     private lateinit var jwtService: JwtService
     @Mock
@@ -66,7 +66,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         doReturn(userDetails).`when`(userDetailsRepository).save(any())
         val auth = EmailSignupAuthorizationRequestFactory.create(user)
         doReturn(auth).`when`(emailSignupAuthorizationRequestRepository).save(any())
-        doNothing().`when`(mailingService).sendSignupAuthorizationEmail(any())
+        lenient().doNothing().`when`(publishEventPublisher).publishEvent(any<SignupEmailAuthorizationEvent>())
 
         // * when
         val loginInfo = service.signup(request)
@@ -137,7 +137,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         doReturn(true).`when`(passwordEncoder).matches(anyString(), anyString())
         doReturn("access_token").`when`(jwtService).generateAccessToken(any())
         doReturn("refresh_token").`when`(jwtService).generateRefreshToken(any())
-        doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
+        lenient().doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
 
         // * when
         val loginInfo = service.login(request)
@@ -178,7 +178,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         val user = Mockito.mock(User::class.java)
         doReturn(user).`when`(userDetails).user
         doReturn(Pair(userDetails, userCredential)).`when`(userRepository).findEmailUser(anyString())
-        doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
+        lenient().doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
         doReturn(ActivateStatus.NOT_AUTHORIZED_BY_EMAIL).`when`(user).activateStatus
 
         // * when
@@ -206,7 +206,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         doReturn(Pair(userDetails, userCredential)).`when`(userRepository).findEmailUser(anyString())
         doReturn(ActivateStatus.ACTIVATED).`when`(user).activateStatus
         doReturn(false).`when`(passwordEncoder).matches(anyString(), anyString())
-        doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
+        lenient().doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
 
         // * when
         val throwable = catchThrowable { service.login(request) }
