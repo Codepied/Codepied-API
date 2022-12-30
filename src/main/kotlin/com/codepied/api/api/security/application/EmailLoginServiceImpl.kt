@@ -1,11 +1,15 @@
 package com.codepied.api.api.security.application
 
+import com.codepied.api.api.TimeService
 import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidPassword
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.mailing.event.SignupEmailAuthorizationEvent
 import com.codepied.api.api.role.RoleType
 import com.codepied.api.api.security.SocialType
+import com.codepied.api.api.security.dto.EmailLoginInfoImpl
+import com.codepied.api.api.security.dto.LoginInfo
+import com.codepied.api.api.security.dto.LoginInfoImpl
 import com.codepied.api.api.security.event.LoginEvent
 import com.codepied.api.api.security.event.LoginStatus
 import com.codepied.api.user.domain.UserFactory
@@ -18,6 +22,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.Duration
 import java.util.*
 
 /**
@@ -37,6 +42,7 @@ class EmailLoginServiceImpl(
     private val publishEventPublisher: ApplicationEventPublisher,
     private val jwtService: JwtService,
     private val eventPublisher: ApplicationEventPublisher,
+    private val timeService: TimeService,
 ): EmailLoginService {
     override fun login(request: EmailUserLogin): LoginInfo {
         val email = request.email
@@ -62,13 +68,17 @@ class EmailLoginServiceImpl(
             throwInvalidPassword()
         }
 
-        return LoginInfoImpl(
+        return EmailLoginInfoImpl(
             userKey = userInfo.first.user.id,
             accessToken = jwtService.generateAccessToken(userInfo.first.user),
             refreshToken = jwtService.generateRefreshToken(userInfo.first.user),
             nickname = userInfo.first.nickname,
             userProfile = null,
             email = request.email,
+            passwordChangeRecommended = Duration.between(
+                userInfo.second.audit.lastModifiedAt!!,
+                timeService.now()
+            ).toDays() >= 90
         ).also { eventPublisher.publishEvent(LoginEvent(it.getUserKey())) }
     }
 
