@@ -17,12 +17,12 @@ enum class SupportLanguage(val locale: Locale, val languageId: String, val alias
     companion object {
         fun matches(languageId: String?): SupportLanguage {
             return try {
-                SupportLanguage.valueOf(languageId?.uppercase() ?: EN.name)
+                SupportLanguage.valueOf(languageId?.uppercase() ?: KO.name)
             } catch (e: Exception) {
                 SupportLanguage.values().firstOrNull {
                     it.languageId.uppercase() == languageId?.uppercase()
                             || languageId in it.aliases
-                } ?: EN
+                } ?: KO
             }
         }
     }

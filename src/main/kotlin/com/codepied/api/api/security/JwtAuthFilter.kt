@@ -21,10 +21,10 @@ import javax.servlet.http.HttpServletResponse
  */
 @Component
 class JwtAuthFilter(
-    val jwtService: JwtService,
-    val exceptionController: ExceptionController,
-    val requestContext: RequestContext,
-    val objectMapper: ObjectMapper,
+    private val jwtService: JwtService,
+    private val exceptionController: ExceptionController,
+    private val requestContext: RequestContext,
+    private val objectMapper: ObjectMapper,
 ) : OncePerRequestFilter() {
     private val excludeUrlPatterns: List<String> = JwtAuthExcludeUrlPattern.values().map { it.url }
 

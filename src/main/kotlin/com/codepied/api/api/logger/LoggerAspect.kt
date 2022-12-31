@@ -1,6 +1,6 @@
 package com.codepied.api.api.logger
 
-import com.codepied.api.api.ObjectMapperHolder
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -23,7 +23,9 @@ import java.time.LocalDateTime
 @Aspect
 @Component
 @Order(10)
-class LoggerAspect {
+class LoggerAspect(
+    private val objectMapper: ObjectMapper,
+) {
     val log: Logger = LoggerFactory.getLogger(LoggerAspect::class.java)
 
     @Around("@within(com.codepied.api.api.logger.Log)")
@@ -43,7 +45,7 @@ class LoggerAspect {
                     val request = requestAttributes.request
                     val method = request.method
                     val url = request.requestURI
-                    val requestBody = ObjectMapperHolder.writeValueAsString(arguments[idx])
+                    val requestBody = objectMapper.writeValueAsString(arguments[idx])
 
                     val logMessage = RequestLogDto(
                         method = method,
@@ -52,7 +54,7 @@ class LoggerAspect {
                         requestTime = LocalDateTime.now(),
                     )
 
-                    log.info(ObjectMapperHolder.writeValueAsString(logMessage))
+                    log.info(objectMapper.writeValueAsString(logMessage))
                 }
             }
             point.proceed()
@@ -62,9 +64,9 @@ class LoggerAspect {
     }
 }
 
- data class RequestLogDto(
-     val method: String,
-     val url: String,
-     val requestBody: String,
-     val requestTime: LocalDateTime,
- )
+data class RequestLogDto(
+    val method: String,
+    val url: String,
+    val requestBody: String,
+    val requestTime: LocalDateTime,
+)

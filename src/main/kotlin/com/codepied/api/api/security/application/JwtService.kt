@@ -9,6 +9,7 @@ import com.codepied.api.api.exception.ServerExceptionBuilder.throwInternalServer
 import com.codepied.api.api.security.dto.PrincipalDetails
 import com.codepied.api.user.domain.User
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.*
 import org.springframework.stereotype.Service
 import java.util.*
@@ -23,6 +24,7 @@ import java.util.*
 class JwtService(
     private val jwtProperty: JwtProperty,
     private val timeService: TimeService,
+    private val objectMapper: ObjectMapper,
 ) {
     fun generateAccessToken(user: User): String {
         val principalDetails = PrincipalDetails.from(user)
@@ -30,7 +32,7 @@ class JwtService(
         val expireTime = Date(now.time + jwtProperty.accessTokenLifetime)
 
         return Jwts.builder()
-            .setSubject(ObjectMapperHolder.writeValueAsString(principalDetails))
+            .setSubject(objectMapper.writeValueAsString(principalDetails))
             .setIssuedAt(now)
             .setExpiration(expireTime)
             .signWith(SignatureAlgorithm.HS512, jwtProperty.accessTokenSecret.toByteArray(Charsets.UTF_8))
@@ -50,7 +52,10 @@ class JwtService(
             .compact()
     }
 
-    fun parseAccessToken(jwt: String) = ObjectMapperHolder.readValue(claimsOfAccessToken(jwt).subject, object : TypeReference<PrincipalDetails>() {})
+    fun parseAccessToken(jwt: String): PrincipalDetails = objectMapper.readValue(
+        claimsOfAccessToken(jwt).subject,
+        object : TypeReference<PrincipalDetails>() {}
+    )
 
     private fun claimsOfAccessToken(jwt: String): Claims {
         try {
@@ -72,7 +77,7 @@ class JwtService(
                     )
                 }
 
-                else -> throwInternalServerError()
+                else -> throwInternalServerError(debugMessage = "unknown error then parsing access token")
             }
         }
     }

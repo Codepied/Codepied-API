@@ -13,7 +13,4 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
  */
 object ObjectMapperHolder {
     val objectMapper: ObjectMapper = ObjectMapper().registerModule(JavaTimeModule()).registerKotlinModule()
-
-    fun writeValueAsString(data: Any) = objectMapper.writeValueAsString(data)
-    fun <T> readValue(json: String, type: TypeReference<T>): T = objectMapper.readValue(json, type)
 }
