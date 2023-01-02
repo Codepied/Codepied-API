@@ -14,4 +14,5 @@ import org.springframework.boot.context.properties.ConstructorBinding
 @ConstructorBinding
 class RunnableEnvProperty(
     val signupAuthorizationEmail: Boolean,
+    val serverProfile: String,
 )

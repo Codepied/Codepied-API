@@ -47,6 +47,10 @@ dependencies {
     /* aws */
     implementation("software.amazon.awssdk:ses:2.18.41")
     implementation("software.amazon.awssdk:sdk-core:2.18.41")
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+    /* file (Tika) */
+    implementation("org.apache.tika:tika-core:2.6.0")
+    implementation("org.apache.tika:tika-parsers:2.6.0")
     /* kotlin */
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

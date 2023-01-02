@@ -8,4 +8,5 @@ import org.springframework.boot.context.properties.ConstructorBinding
 class AwsProperty(
     val accessKeyId: String,
     val secretAccessKey: String,
+    val s3BucketName: String,
 )
