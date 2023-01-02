@@ -4,12 +4,14 @@ import com.codepied.api.api.config.ServerProfile
 import com.codepied.api.api.domain.Audit
 import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 import javax.persistence.*
 
 @Entity
 @Table(name = "CODEPIED_FILE")
+@EntityListeners(AuditingEntityListener::class)
 class CodepiedFile(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
