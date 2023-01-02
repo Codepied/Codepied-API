@@ -19,6 +19,4 @@ class FileDownloadView : AbstractView() {
     ) {
         TODO("Not yet implemented")
     }
-
-
 }

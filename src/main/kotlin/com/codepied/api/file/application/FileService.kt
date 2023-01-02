@@ -8,6 +8,7 @@ import com.codepied.api.api.file.TempFile
 import com.codepied.api.file.domain.CodepiedFileFactory
 import com.codepied.api.file.domain.CodepiedFileRepository
 import com.codepied.api.file.dto.FileCreate
+import com.codepied.api.file.dto.FileResponse
 import org.apache.tika.Tika
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,10 +23,11 @@ class FileService(
     private val tika: Tika,
     private val env: RunnableEnvProperty,
     private val uploader: FileUploader,
+    private val downloader: FileDownloader,
     private val fileRepository: CodepiedFileRepository
 ) {
     @Transactional
-    fun create(request: FileCreate) {
+    fun createPublicFile(request: FileCreate) {
         if (request.file.size > 3_000_000) {
             throwInvalidRequest(
                 errorCode = BusinessErrorCode.EXCEED_FILE_SIZE,
@@ -40,15 +42,47 @@ class FileService(
                     mediaType = tika.detect(file.path.toFile()),
                     originalName = request.fileName,
                     serverProfile = serverProfile,
+                    isPublic = true,
                 )
                 uploader.upload(fileEntity.fileId, file.path.toFile())
 
                 fileRepository.save(fileEntity)
             }
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             throwInvalidRequest(
                 errorCode = BusinessErrorCode.FAIL_TO_FILE_UPLOAD,
                 debugMessage = "fail to file upload"
+            )
+        }
+    }
+
+    fun retrievePublicFileById(fileId: String): FileResponse {
+        // * public 검증
+        val fileEntity = fileRepository.getByFileIdAndPublicIs(fileId = fileId, isPublic = true)
+
+        // * retrieve file input stream
+        val inputStream = downloader.download(fileId)
+
+        return with(fileEntity) {
+            FileResponse(
+                inputStream = inputStream,
+                fileName = originalName,
+                mediaType = mediaType,
+            )
+        }
+    }
+
+    fun retrievePublicFileByFileKey(fileKey: Long): FileResponse {
+        val fileEntity = fileRepository.getByIdAndPublic(id = fileKey, isPublic = true)
+
+        // * retrieve file input stream
+        val inputStream = downloader.download(fileEntity.fileId)
+
+        return with(fileEntity) {
+            FileResponse(
+                inputStream = inputStream,
+                fileName = originalName,
+                mediaType = mediaType,
             )
         }
     }
