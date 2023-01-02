@@ -9,6 +9,7 @@ package com.codepied.api.api.security.dto
 enum class JwtAuthExcludeUrlPattern(val url: String) {
     USER_LOGIN("/api/users/auths/login"),
     USER_SIGNUP("/api/users/auths/signup"),
-    USER_INFO_DUPLICATE("/api/users/info/duplicate")
+    USER_INFO_DUPLICATE("/api/users/info/duplicate"),
+    PUBLIC_FILES("/api/files/public"),
     ;
 }

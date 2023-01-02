@@ -55,6 +55,7 @@ class WebSecurityConfig(
         httpSecurity.authorizeHttpRequests()
             .antMatchers("/api/users/auths/**").permitAll()
             .antMatchers("/api/users/info/duplicate").permitAll()
+            .antMatchers("/api/files/public").permitAll()
             .antMatchers("/**").authenticated()
             .antMatchers("/api/management/**").hasAnyRole(RoleType.MANAGER.name, RoleType.PLATFORM_ADMIN.name)
             .antMatchers("/api/admin/**").hasRole(RoleType.PLATFORM_ADMIN.name)
