@@ -58,7 +58,7 @@ class FileService(
 
     fun retrievePublicFileById(fileId: String): FileResponse {
         // * public 검증
-        val fileEntity = fileRepository.getByFileIdAndPublicIs(fileId = fileId, isPublic = true)
+        val fileEntity = fileRepository.getByFileIdAndPublicFile(fileId = fileId, isPublicFile = true)
 
         // * retrieve file input stream
         val inputStream = downloader.download(fileId)
@@ -73,7 +73,7 @@ class FileService(
     }
 
     fun retrievePublicFileByFileKey(fileKey: Long): FileResponse {
-        val fileEntity = fileRepository.getByIdAndPublic(id = fileKey, isPublic = true)
+        val fileEntity = fileRepository.getByIdAndPublicFile(id = fileKey, isPublicFile = true)
 
         // * retrieve file input stream
         val inputStream = downloader.download(fileEntity.fileId)

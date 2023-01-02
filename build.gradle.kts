@@ -47,7 +47,8 @@ dependencies {
     /* aws */
     implementation("software.amazon.awssdk:ses:2.18.41")
     implementation("software.amazon.awssdk:sdk-core:2.18.41")
-    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.376")
+
     /* file (Tika) */
     implementation("org.apache.tika:tika-core:2.6.0")
     implementation("org.apache.tika:tika-parsers:2.6.0")

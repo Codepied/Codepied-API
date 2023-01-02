@@ -28,7 +28,7 @@ class CodepiedFile(
     val mediaType: String,
 
     @Column(name = "IS_PUBLIC_FILE", nullable =false, updatable = false)
-    val isPublic: Boolean,
+    val publicFile: Boolean,
 ) {
     @Embedded
     val audit: Audit = Audit()
@@ -41,22 +41,22 @@ object CodepiedFileFactory {
             originalName = originalName,
             fileId = "${UUID.randomUUID()}/codepied-core:server:${serverProfile.name}",
             mediaType = mediaType,
-            isPublic = isPublic,
+            publicFile = isPublic,
         )
     }
 }
 
 interface CodepiedFileRepository : JpaRepository<CodepiedFile, Long> {
-    fun findByFileIdAndPublic(fileId: String, isPublic: Boolean): CodepiedFile?
-    fun findByIdAndPublic(id: Long, isPublic: Boolean): CodepiedFile?
-    fun getByFileIdAndPublicIs(fileId: String, isPublic: Boolean): CodepiedFile {
-        return this.findByFileIdAndPublic(fileId, isPublic) ?: throwInvalidRequest(
+    fun findByFileIdAndPublicFile(fileId: String, isPublicFile: Boolean): CodepiedFile?
+    fun findByIdAndPublicFile(id: Long, isPublicFile: Boolean): CodepiedFile?
+    fun getByFileIdAndPublicFile(fileId: String, isPublicFile: Boolean): CodepiedFile {
+        return this.findByFileIdAndPublicFile(fileId, isPublicFile) ?: throwInvalidRequest(
             errorCode = BusinessErrorCode.NO_RESOURCE_ERROR,
             debugMessage = "no file resource",
         )
     }
-    fun getByIdAndPublic(id: Long, isPublic: Boolean): CodepiedFile {
-        return this.findByIdAndPublic(id, isPublic) ?: throwInvalidRequest(
+    fun getByIdAndPublicFile(id: Long, isPublicFile: Boolean): CodepiedFile {
+        return this.findByIdAndPublicFile(id, isPublicFile) ?: throwInvalidRequest(
             errorCode = BusinessErrorCode.NO_RESOURCE_ERROR,
             debugMessage = "no file resource",
         )
