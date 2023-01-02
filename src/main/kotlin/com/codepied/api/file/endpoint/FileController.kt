@@ -22,7 +22,7 @@ class FileController(
 ) {
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/")
+    @PostMapping
     fun create(
         @Valid request: FileCreate
     ): SuccessResponse<Boolean> {
@@ -32,7 +32,7 @@ class FileController(
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/", params = ["type=FILE_ID"])
+    @GetMapping(params = ["type=FILE_ID"])
     fun retrieveByFileId(
         @RequestParam fileId: String,
         model: ModelMap,
@@ -43,7 +43,7 @@ class FileController(
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/", params = ["type=FILE_KEY"])
+    @GetMapping(params = ["type=FILE_KEY"])
     fun retrieveByFileKey(
         @RequestParam fileKey: Long,
         model: ModelMap,
