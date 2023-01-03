@@ -30,7 +30,8 @@ class AwsMailingServiceTest : AbstractServiceTest() {
         // * given
         val event = SignupEmailAuthorizationEvent(
             to = "test@test.com",
-            uri = "https://codepied.com/auths/signup"
+            uri = "https://codepied.com/auths/signup",
+            nickname = "testNickname"
         )
         val template = EmailTemplate(
             id = 1L,

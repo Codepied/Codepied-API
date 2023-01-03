@@ -76,6 +76,7 @@ dependencies {
 allOpen {
     annotation("javax.persistence.Entity")
     annotation("javax.persistence.Embeddable")
+    annotation("org.springframework.boot.context.properties.ConfigurationProperties")
 }
 
 tasks.withType<KotlinCompile> {
@@ -94,10 +95,12 @@ tasks {
      */
     val snippetsDir by extra { file("build/generated-snippets") }
     val jacocoExcludePatterns = listOf(
+        "com/codepied/api/api/security/application/JwtService.class",
+        "com/codepied/api/ApiApplicationKt.class",
+        "com/codepied/api/file/endpoint/FileController.class",
         "**/config/**",
         "**/domain/**",
         "**/*Config*",
-        "com/codepied/api/api/security/application/JwtService.class",
         "**/*Factory*",
         "**/*Dto*",
         "**/dto/**",
@@ -105,7 +108,8 @@ tasks {
         "**/exception/**",
         "**/event/**",
         "**/locale/**",
-        "com/codepied/api/ApiApplicationKt.class",
+        "**/view/**",
+        "**/FileDownloader.class",
     )
 
     clean {
