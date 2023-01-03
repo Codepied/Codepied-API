@@ -4,18 +4,12 @@ import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.externalApi.SocialLoginApiService
 import com.codepied.api.api.role.RoleType
-import com.codepied.api.api.security.dto.SocialAccount
 import com.codepied.api.api.security.SocialType
 import com.codepied.api.api.security.dto.LoginInfo
 import com.codepied.api.api.security.dto.LoginInfoImpl
+import com.codepied.api.api.security.dto.SocialAccount
 import com.codepied.api.api.security.event.LoginEvent
-import com.codepied.api.user.domain.User
-import com.codepied.api.user.domain.UserFactory
-import com.codepied.api.user.domain.UserRepository
-import com.codepied.api.user.domain.ActivateStatus
-import com.codepied.api.user.domain.SocialUserIdentificationRepository
-import com.codepied.api.user.domain.UserDetailsFactory
-import com.codepied.api.user.domain.UserDetailsRepository
+import com.codepied.api.user.domain.*
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -78,21 +72,5 @@ class SocialLoginServiceImpl(
                 email = socialIdentification.email,
             )
         }).also { eventPublisher.publishEvent(LoginEvent(it.getUserKey())) }
-    }
-
-    override fun logout(socialType: SocialType, authorizationCode: String, user: User) {
-        when(socialType) {
-            SocialType.GOOGLE -> {
-
-            }
-            SocialType.KAKAO -> {
-
-            }
-            SocialType.NAVER -> {
-
-            }
-            else -> null
-        }
-        TODO("Not yet implemented")
     }
 }

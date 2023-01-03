@@ -11,19 +11,11 @@ import java.util.*
 enum class SupportLanguage(val locale: Locale, val languageId: String, val aliases: List<String>) {
     KO(Locale.forLanguageTag("ko"), "ko", listOf("kr", "korea")),
     EN(Locale.forLanguageTag("en"), "en", listOf("us", "gb")),
-//    JP(Locale.forLanguageTag("ja"), "ja", listOf("jp", "japan")),
     ;
 
     companion object {
-        fun matches(languageId: String?): SupportLanguage {
-            return try {
-                SupportLanguage.valueOf(languageId?.uppercase() ?: EN.name)
-            } catch (e: Exception) {
-                SupportLanguage.values().firstOrNull {
-                    it.languageId.uppercase() == languageId?.uppercase()
-                            || languageId in it.aliases
-                } ?: EN
-            }
-        }
+        private val observer = values().associateBy { it.languageId.uppercase() }
+
+        fun matches(languageId: String?): SupportLanguage = observer[languageId?.uppercase()] ?: KO
     }
 }

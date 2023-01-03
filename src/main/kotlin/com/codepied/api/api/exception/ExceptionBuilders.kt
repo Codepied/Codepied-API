@@ -72,4 +72,8 @@ object ServerExceptionBuilder {
     }
 
     fun throwInternalServerError(debugMessage: String = "internal server error"): Nothing = throw serverError(debugMessage = debugMessage)
+    fun throwCodeError(debugMessage: String = "code match error"): Nothing = throw serverError(
+        errorCode = ServerErrorCode.CODE_ERROR,
+        debugMessage = debugMessage,
+    )
 }

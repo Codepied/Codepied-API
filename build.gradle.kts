@@ -3,7 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.7.6"
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
-    id ("org.jetbrains.kotlin.plugin.allopen") version "1.6.21"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.6.21"
+    id("jacoco")
     /* plugin for spring rest doc */
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     kotlin("jvm") version "1.6.21"
@@ -84,10 +85,6 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
 /**
  * task setting for spring rest doc
  */
@@ -96,6 +93,20 @@ tasks {
      * snippetsDir 설정
      */
     val snippetsDir by extra { file("build/generated-snippets") }
+    val jacocoExcludePatterns = listOf(
+        "**/config/**",
+        "**/domain/**",
+        "**/*Config*",
+        "com/codepied/api/api/security/application/JwtService.class",
+        "**/*Factory*",
+        "**/*Dto*",
+        "**/dto/**",
+        "com/codepied/api/api/externalApi/**",
+        "**/exception/**",
+        "**/event/**",
+        "**/locale/**",
+        "com/codepied/api/ApiApplicationKt.class",
+    )
 
     clean {
         delete("src/main/resources/static/docs")
@@ -108,6 +119,67 @@ tasks {
         useJUnitPlatform()
         systemProperty("org.springframework.restdocs.outputDir", snippetsDir)
         outputs.dir(snippetsDir)
+
+        /**
+         * jacoco setting
+         */
+        jacoco {
+            version = "0.8.7"
+            enabled = true
+            this.reportsDirectory.set(file("$buildDir/jacoco/result/${name}.html"))
+        }
+
+        finalizedBy("jacocoTestReport")
+    }
+
+    /**
+     * jacoco setting
+     */
+    jacocoTestReport {
+        reports {
+            html.required.set(true)
+            xml.required.set(false)
+            csv.required.set(false)
+        }
+
+        classDirectories.setFrom(
+            files(classDirectories.files.map {
+                fileTree(it) {
+                    exclude(jacocoExcludePatterns)
+                }
+            })
+        )
+
+        finalizedBy("jacocoTestCoverageVerification")
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                isEnabled = true
+                element = "CLASS"
+
+                limit {
+                    counter = "BRANCH" // 조건분기
+                    value = "COVEREDRATIO"
+                    minimum = BigDecimal("0.8")
+                }
+
+                limit {
+                    counter = "LINE"
+                    value = "COVEREDRATIO"
+                    minimum = BigDecimal("0.8")
+                }
+            }
+        }
+
+        classDirectories.setFrom(
+            files(classDirectories.files.map {
+                fileTree(it) {
+                    exclude(jacocoExcludePatterns)
+                }
+            })
+        )
     }
 
     build {
@@ -146,4 +218,6 @@ tasks {
     processResources {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
+
+
 }

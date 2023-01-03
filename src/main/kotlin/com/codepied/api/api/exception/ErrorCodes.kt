@@ -64,7 +64,7 @@ enum class ParameterErrorCode : CodeEnum {
  */
 enum class ServerErrorCode : CodeEnum {
     INTERNAL_SERVER_ERROR,
-
+    CODE_ERROR,
     ;
 
     override fun getCodeValue(): String = "EXCEPTION.SERVER.$name"
