@@ -12,4 +12,6 @@ data class FileResponse(
     val inputStream: InputStream,
     val mediaType: String,
     val fileName: String,
-)
+) {
+    var contentDisPosition: String = "attachment"
+}
