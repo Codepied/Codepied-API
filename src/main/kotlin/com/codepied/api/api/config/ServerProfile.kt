@@ -1,5 +1,6 @@
 package com.codepied.api.api.config
 
+import com.codepied.api.api.exception.ServerExceptionBuilder.throwCodeError
 import com.codepied.api.api.exception.ServerExceptionBuilder.throwInternalServerError
 
 /**
@@ -16,7 +17,7 @@ enum class ServerProfile {
     companion object {
         fun matches(code: String): ServerProfile {
             val uppercase = code.uppercase()
-            return ServerProfile.values().firstOrNull { it.name == uppercase } ?: throwInternalServerError()
+            return ServerProfile.values().firstOrNull { it.name == uppercase } ?: throwCodeError()
         }
     }
 }
