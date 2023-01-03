@@ -1,11 +1,8 @@
 package com.codepied.api.api.security
 
-import com.codepied.api.api.CodeEnum
-import com.codepied.api.api.exception.BusinessErrorCode
-import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
-import org.springframework.http.HttpStatus
+import com.codepied.api.api.exception.ServerExceptionBuilder.throwCodeError
 
-enum class SocialType: CodeEnum {
+enum class SocialType {
     EMAIL,
     KAKAO,
     NAVER,
@@ -14,14 +11,7 @@ enum class SocialType: CodeEnum {
 
     companion object {
         fun matches(code: String?): SocialType {
-            return SocialType.values().find { it.name == code } ?: throwInvalidRequest(
-                errorCode = BusinessErrorCode.NO_RESOURCE_ERROR,
-                debugMessage = "no social login type",
-                httpStatus = HttpStatus.BAD_REQUEST
-            )
+            return SocialType.values().find { it.name == code } ?: throwCodeError()
         }
     }
-
-    override fun getCodeValue(): String = "EXCEPTION.PARAMETERS.${name}"
-    override fun getNameValue(): String = this.name
 }

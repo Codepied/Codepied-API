@@ -21,4 +21,10 @@ class SupportLanguageTest {
         // * then
         Assertions.assertThat(supportLanguage).isEqualTo(SupportLanguage.KO)
     }
+
+    @Test
+    fun `적합한 언어코드`() {
+        val supportLanguage = SupportLanguage.matches("en")
+        Assertions.assertThat(supportLanguage).isEqualTo(SupportLanguage.EN)
+    }
 }

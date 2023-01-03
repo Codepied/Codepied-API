@@ -80,10 +80,6 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
 /**
  * task setting for spring rest doc
  */
@@ -92,6 +88,20 @@ tasks {
      * snippetsDir 설정
      */
     val snippetsDir by extra { file("build/generated-snippets") }
+    val jacocoExcludePatterns = listOf(
+        "**/config/**",
+        "**/domain/**",
+        "**/*Config*",
+        "com/codepied/api/api/security/application/JwtService.class",
+        "**/*Factory*",
+        "**/*Dto*",
+        "**/dto/**",
+        "com/codepied/api/api/externalApi/**",
+        "**/exception/**",
+        "**/event/**",
+        "**/locale/**",
+        "com/codepied/api/ApiApplicationKt.class",
+    )
 
     clean {
         delete("src/main/resources/static/docs")
@@ -99,19 +109,20 @@ tasks {
 
     test {
         /**
-         * jacoco setting
-         */
-        jacoco {
-            version = "0.8.5"
-            enabled = true
-            this.reportsDirectory.set(file("$buildDir/jacoco/${name}.exec"))
-        }
-        /**
          * test output dir 설정
          */
         useJUnitPlatform()
         systemProperty("org.springframework.restdocs.outputDir", snippetsDir)
         outputs.dir(snippetsDir)
+
+        /**
+         * jacoco setting
+         */
+        jacoco {
+            version = "0.8.7"
+            enabled = true
+            this.reportsDirectory.set(file("$buildDir/jacoco/result/${name}.html"))
+        }
 
         finalizedBy("jacocoTestReport")
     }
@@ -125,6 +136,14 @@ tasks {
             xml.required.set(false)
             csv.required.set(false)
         }
+
+        classDirectories.setFrom(
+            files(classDirectories.files.map {
+                fileTree(it) {
+                    exclude(jacocoExcludePatterns)
+                }
+            })
+        )
 
         finalizedBy("jacocoTestCoverageVerification")
     }
@@ -148,6 +167,14 @@ tasks {
                 }
             }
         }
+
+        classDirectories.setFrom(
+            files(classDirectories.files.map {
+                fileTree(it) {
+                    exclude(jacocoExcludePatterns)
+                }
+            })
+        )
     }
 
     build {
