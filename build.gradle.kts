@@ -3,7 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.7.6"
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
-    id ("org.jetbrains.kotlin.plugin.allopen") version "1.6.21"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.6.21"
+    id("jacoco")
     /* plugin for spring rest doc */
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     kotlin("jvm") version "1.6.21"
@@ -98,11 +99,55 @@ tasks {
 
     test {
         /**
+         * jacoco setting
+         */
+        jacoco {
+            version = "0.8.5"
+            enabled = true
+            this.reportsDirectory.set(file("$buildDir/jacoco/${name}.exec"))
+        }
+        /**
          * test output dir 설정
          */
         useJUnitPlatform()
         systemProperty("org.springframework.restdocs.outputDir", snippetsDir)
         outputs.dir(snippetsDir)
+
+        finalizedBy("jacocoTestReport")
+    }
+
+    /**
+     * jacoco setting
+     */
+    jacocoTestReport {
+        reports {
+            html.required.set(true)
+            xml.required.set(false)
+            csv.required.set(false)
+        }
+
+        finalizedBy("jacocoTestCoverageVerification")
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                isEnabled = true
+                element = "CLASS"
+
+                limit {
+                    counter = "BRANCH" // 조건분기
+                    value = "COVEREDRATIO"
+                    minimum = BigDecimal("0.8")
+                }
+
+                limit {
+                    counter = "LINE"
+                    value = "COVEREDRATIO"
+                    minimum = BigDecimal("0.8")
+                }
+            }
+        }
     }
 
     build {
@@ -141,4 +186,6 @@ tasks {
     processResources {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
+
+
 }
