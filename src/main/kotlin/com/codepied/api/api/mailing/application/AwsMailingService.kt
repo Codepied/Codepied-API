@@ -16,7 +16,7 @@ class AwsMailingService(
     private val client: SesAsyncClient,
     private val emailTemplateRepository: EmailTemplateRepository,
 ) {
-    private val from: String = "noreply@codepied.com"
+    private val from: String = "codepied@gmail.com"
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     fun sendSignupAuthorizationEmail(values: SignupEmailAuthorizationEvent) {

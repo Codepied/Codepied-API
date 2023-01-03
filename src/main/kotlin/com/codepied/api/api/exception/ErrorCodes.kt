@@ -25,6 +25,8 @@ enum class BusinessErrorCode : CodeEnum {
     NOT_ACCESSIBLE_SOCIAL_USER_KAKAO,
     INVALID_ENUM_CODE_ERROR,
     NO_SUCH_USER_LOGIN,
+    EXCEED_FILE_SIZE,
+    FAIL_TO_FILE_UPLOAD,
     ;
 
     override fun getCodeValue(): String = "EXCEPTION.$name"

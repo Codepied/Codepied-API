@@ -125,6 +125,7 @@ class EmailLoginServiceImpl(
         // * send mail (async process)
         publishEventPublisher.publishEvent(SignupEmailAuthorizationEvent(
             to = request.email,
+            nickname = userDetails.nickname,
             uri = "https://www.codepied.com/auth/signup/${auth.uuid}"
         ))
 

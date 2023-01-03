@@ -13,7 +13,7 @@ interface EmailTemplateEvent {
         val values = this.values()
 
         var content = template
-        values.entries.map { with(it) { content = template.replace("{{$key}}", value) } }
+        values.entries.map { with(it) { content = content.replace("{{$key}}", value) } }
 
         return content
     }

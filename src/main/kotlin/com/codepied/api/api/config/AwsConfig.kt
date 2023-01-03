@@ -1,5 +1,10 @@
 package com.codepied.api.api.config
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider
+import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.regions.Regions
+import com.amazonaws.services.s3.AmazonS3
+import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
@@ -25,6 +30,18 @@ class AwsConfig(
         return SesAsyncClient.builder()
             .credentialsProvider { awsCredentials() }
             .region(Region.AP_NORTHEAST_2)
+            .build()
+    }
+
+    @Bean
+    fun s3Client(): AmazonS3 {
+        val awsCreds = with(awsProperty) {
+            BasicAWSCredentials(accessKeyId, secretAccessKey)
+        }
+
+        return AmazonS3ClientBuilder.standard()
+            .withRegion(Regions.AP_NORTHEAST_2)
+            .withCredentials(AWSStaticCredentialsProvider(awsCreds))
             .build()
     }
 }
