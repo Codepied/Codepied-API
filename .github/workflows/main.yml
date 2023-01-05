@@ -69,7 +69,7 @@ jobs:
                 username: ${{ secrets.AWS_SSH_HOST_USERNAME }}
                 key: ${{ secrets.AWS_SSH_KEY }}
                 port: ${{ secrets.AWS_SSH_PORT }}
-                script_stop: true
+                script_stop: false
                 script: |
                     docker stop core-api
                     docker rm core-api
