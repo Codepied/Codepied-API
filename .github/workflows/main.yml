@@ -56,8 +56,9 @@ jobs:
                 docker tag $REPO:latest $NAME/$REPO:latest
                 docker push $NAME/$REPO:latest
 
-    deploy-ec2:
+    deploy:
         name: connect ec2 and deploy
+        needs: dockerhub
         runs-on: ubuntu-latest
 
         steps:
@@ -68,9 +69,10 @@ jobs:
                 username: ${{ secrets.AWS_SSH_HOST_USERNAME }}
                 key: ${{ secrets.AWS_SSH_KEY }}
                 port: ${{ secrets.AWS_SSH_PORT }}
-                script_stop: true
+                script_stop: false
                 script: |
                     docker stop core-api
+                    docker rm core-api
                     docker pull codepied/codepied-api
                     docker run -d --name core-api -p 8080:8080 codepied/codepied-api
 
