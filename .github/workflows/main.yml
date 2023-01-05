@@ -56,3 +56,20 @@ jobs:
                 docker tag $REPO:latest $NAME/$REPO:latest
                 docker push $NAME/$REPO:latest
 
+    deploy:
+        name: connect ec2 and deploy
+        runs-on: ubuntu-latest
+        steps:
+        -   name: deploy
+            uses: appleboy/ssh-action@v0.1.6
+            with:
+                host: ${{ secrets.AWS_SSH_HOST }}
+                username: ${{ secrets.AWS_SSH_HOST_USERNAME }}
+                key: ${{ secrets.AWS_SSH_KEY }}
+                port: ${{ secrets.AWS_SSH_PORT }}
+                script_stop: true
+                script: |
+                    docker stop core-api
+                    docker pull codepied/codepied-api
+                    docker run -d --name core-api -p 8080:8080 codepied/codepied-api
+
