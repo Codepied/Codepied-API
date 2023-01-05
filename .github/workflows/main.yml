@@ -56,9 +56,10 @@ jobs:
                 docker tag $REPO:latest $NAME/$REPO:latest
                 docker push $NAME/$REPO:latest
 
-    deploy:
+    deploy-ec2:
         name: connect ec2 and deploy
         runs-on: ubuntu-latest
+
         steps:
         -   name: deploy
             uses: appleboy/ssh-action@v0.1.6
