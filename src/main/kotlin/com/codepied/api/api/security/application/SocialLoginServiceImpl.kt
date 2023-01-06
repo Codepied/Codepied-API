@@ -31,7 +31,7 @@ class SocialLoginServiceImpl(
         user.addSocialIdentification(socialAccount.socialIdentification(), socialType, socialAccount.email())
         userRepository.save(user)
 
-        val userDetails = UserDetailsFactory.create("유동-${UUID.randomUUID()}", user)
+        val userDetails = UserDetailsFactory.create("유동-${UUID.randomUUID()}", user, null)
         userDetailsRepository.save(userDetails)
 
         return LoginInfoImpl(

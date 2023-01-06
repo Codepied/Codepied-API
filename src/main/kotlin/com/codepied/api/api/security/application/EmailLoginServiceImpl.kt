@@ -115,7 +115,7 @@ class EmailLoginServiceImpl(
         userCredentialRepository.save(userCredential)
 
         // * create user details
-        val userDetails = UserDetailsFactory.create(request.nickname, user)
+        val userDetails = UserDetailsFactory.create(request.nickname, user, null)
         userDetailsRepository.save(userDetails)
 
         // * create email authorization
