@@ -8,6 +8,7 @@ import com.codepied.api.api.security.JwtAuthFilter
 import com.codepied.api.api.security.application.EmailLoginService
 import com.codepied.api.api.security.application.SocialLoginService
 import com.codepied.api.user.application.UserInfoService
+import com.codepied.api.user.application.UserIntegrationService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,6 +46,7 @@ import org.springframework.web.context.WebApplicationContext
         ExceptionController::class,
         UserInfoController::class,
         UserAuthController::class,
+        UserIntegrationController::class,
         RequestContext::class,
         MockMvcRestDocumentationConfigurer::class,
         RestDocumentationContextProvider::class,
@@ -64,6 +66,8 @@ abstract class AbstractUserEndpointTest(val uri: String) {
     protected lateinit var socialLoginService: SocialLoginService
     @MockBean
     protected lateinit var emailLoginService: EmailLoginService
+    @MockBean
+    protected lateinit var userIntegrationService: UserIntegrationService
 
     @Autowired
     private lateinit var webApplicationContext: WebApplicationContext

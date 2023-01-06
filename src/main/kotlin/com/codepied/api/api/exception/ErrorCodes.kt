@@ -27,6 +27,7 @@ enum class BusinessErrorCode : CodeEnum {
     NO_SUCH_USER_LOGIN,
     EXCEED_FILE_SIZE,
     FAIL_TO_FILE_UPLOAD,
+    INTEGRATION_SQL_FAIL,
     ;
 
     override fun getCodeValue(): String = "EXCEPTION.$name"

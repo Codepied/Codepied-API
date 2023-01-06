@@ -1,6 +1,7 @@
 package com.codepied.api.user.domain
 
 import com.codepied.api.api.domain.Audit
+import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwNoSuchUser
 import com.codepied.api.api.security.SocialType
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
@@ -53,4 +54,10 @@ object SocialUserIdentificationFactory {
 interface SocialUserIdentificationRepository : JpaRepository<SocialUserIdentification, Long> {
     fun findBySocialTypeAndSocialIdentification(socialType: SocialType, socialIdentification: String): SocialUserIdentification?
     fun existsByEmail(email: String): Boolean
+
+    fun getBySocialTypeAndSocialIdentification(socialType: SocialType, socialIdentification: String): SocialUserIdentification {
+        return this.findBySocialTypeAndSocialIdentification(socialType, socialIdentification) ?: throwNoSuchUser()
+    }
+
+    fun findAllByUserId(userId: Long): List<SocialUserIdentification>
 }

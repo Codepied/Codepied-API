@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class UserAuthControllerTestUser : AbstractUserEndpointTest("/api/users/auths") {
+class UserAuthControllerTest : AbstractUserEndpointTest("/api/users/auths") {
     @Test
     fun `이메일 회원가입 성공`() {
         // * given
