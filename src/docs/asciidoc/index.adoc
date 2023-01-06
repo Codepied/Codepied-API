@@ -99,3 +99,20 @@ include::{snippets}/NICKNAME_CHANGE/request-body.adoc[]
 include::{snippets}/NICKNAME_CHANGE/response-fields.adoc[]
 include::{snippets}/NICKNAME_CHANGE/http-response.adoc[]
 // -------------------------------
+
+== User Integration
+
+=== Raw Request
+include::{snippets}/USER_INTEGRATION/http-request.adoc[]
+
+=== Request Headers
+include::{snippets}/USER_INTEGRATION/request-headers.adoc[]
+
+=== Request Body
+include::{snippets}/USER_INTEGRATION/request-fields.adoc[]
+include::{snippets}/USER_INTEGRATION/request-body.adoc[]
+
+=== Response
+include::{snippets}/USER_INTEGRATION/response-fields.adoc[]
+include::{snippets}/USER_INTEGRATION/http-response.adoc[]
+// -------------------------------

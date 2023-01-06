@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class UserInfoControllerTestUser : AbstractUserEndpointTest("/api/users/info") {
+class UserInfoControllerTest : AbstractUserEndpointTest("/api/users/info") {
     @Test
     fun `중복체크 성공`() {
         // * given

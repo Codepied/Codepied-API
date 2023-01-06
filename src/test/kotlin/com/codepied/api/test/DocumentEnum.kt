@@ -7,5 +7,6 @@ enum class DocumentEnum {
     USER_INFO_DUPLICATE,
     EMAIL_USER_PASSWORD_CHANGE,
     NICKNAME_CHANGE,
+    USER_INTEGRATION,
     ;
 }
