@@ -12,11 +12,13 @@ import com.codepied.api.user.domain.UserDetailsRepository
 import com.codepied.api.user.dto.UserDataDuplicateType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.Mockito.lenient
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -35,6 +37,11 @@ class UserInfoServiceTest : AbstractServiceTest() {
 
     @InjectMocks
     private lateinit var service: UserInfoService
+
+    @BeforeEach
+    fun init() {
+        lenient().doReturn(1L).`when`(requestContext).userKey
+    }
 
     @Test
     fun `이메일 중복체크 성공`() {
@@ -118,7 +125,7 @@ class UserInfoServiceTest : AbstractServiceTest() {
     }
 
     @Test
-    fun `닉네임 변경 실패`() {
+    fun `닉네임 변경 실패 - 일치유저 없음`() {
         // * given
         doReturn(null).`when`(userDetailsRepository).findByUserId(anyLong())
 
@@ -129,5 +136,62 @@ class UserInfoServiceTest : AbstractServiceTest() {
         assertThat(throwable is InvalidRequestException).isTrue
         val exception = throwable as InvalidRequestException
         assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.NO_SUCH_USER_LOGIN)
+    }
+
+    @Test
+    fun `닉네임 변경 실패 - 중복 닉네임 존재`() {
+        // * given
+        doReturn(true).`when`(userDetailsRepository).existsByNickname(anyString())
+
+        // * when
+        val throwable = catchThrowable { service.changeNickname("test") }
+
+        // * then
+        assertThat(throwable is InvalidRequestException).isTrue
+        val exception = throwable as InvalidRequestException
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.DUPLICATED_NICKNAME)
+    }
+
+    @Test
+    fun `프로파일 이미지 변경 성공 - (null fileId)`() {
+        // * given
+        val details = createOneUserDetails()
+        details.profileFileId = "수정"
+        doReturn(details).`when`(userDetailsRepository).getByUserId(anyLong())
+
+        // * when
+        service.changeProfileImage(null)
+
+        // * then
+        assertThat(details.profileFileId).isNull()
+    }
+
+    @Test
+    fun `프로파일 이미지 변경 성공 - (blank fileId)`() {
+        // * given
+        val details = createOneUserDetails()
+        details.profileFileId = "수정"
+        doReturn(details).`when`(userDetailsRepository).getByUserId(anyLong())
+
+        // * when
+        service.changeProfileImage("")
+
+        // * then
+        assertThat(details.profileFileId).isNull()
+    }
+
+    @Test
+    fun `프로파일 이미지 변경 성공 - (not null)`() {
+        // * given
+        val details = createOneUserDetails()
+        val fileId = "test_file_id"
+        doReturn(details).`when`(userDetailsRepository).getByUserId(anyLong())
+
+        // * when
+
+        service.changeProfileImage(fileId)
+
+        // * then
+        assertThat(details.profileFileId).isEqualTo(fileId)
     }
 }

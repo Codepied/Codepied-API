@@ -10,5 +10,5 @@ import com.codepied.api.user.domain.UserDetailsFactory
 object MockStore {
     fun createOneUser() = UserFactory.createUser(listOf(RoleType.USER), ActivateStatus.ACTIVATED)
     fun createOneUserCredential(user: User? = null) = UserCredentialFactory.create("password", user ?: createOneUser())
-    fun createOneUserDetails(user: User? = null) = UserDetailsFactory.create("nickname", user ?: createOneUser())
+    fun createOneUserDetails(user: User? = null) = UserDetailsFactory.create("nickname", user ?: createOneUser(), null)
 }

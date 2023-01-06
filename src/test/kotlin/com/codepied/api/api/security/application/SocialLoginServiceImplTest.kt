@@ -50,7 +50,7 @@ class SocialLoginServiceImplTest : AbstractServiceTest() {
         val user = UserFactory.createUser(listOf(RoleType.USER), ActivateStatus.ACTIVATED)
         doReturn(user).`when`(userRepository).save(any())
 
-        val userDetails = UserDetailsFactory.create("유동-${UUID.randomUUID()}", user)
+        val userDetails = UserDetailsFactory.create("유동-${UUID.randomUUID()}", user, null)
         doReturn(userDetails).`when`(userDetailsRepository).save(any())
 
         val accessToken = "access token"
@@ -110,7 +110,7 @@ class SocialLoginServiceImplTest : AbstractServiceTest() {
             eq(socialAccount.socialIdentification())
         )
 
-        val userDetails = UserDetailsFactory.create("nickname", user)
+        val userDetails = UserDetailsFactory.create("nickname", user, null)
         doReturn(userDetails).`when`(userDetailsRepository).findByUser(eq(user))
 
         val accessToken = "access token"
