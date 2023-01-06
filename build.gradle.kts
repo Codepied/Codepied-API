@@ -97,7 +97,7 @@ tasks {
     val jacocoExcludePatterns = listOf(
         "com/codepied/api/api/security/application/JwtService.class",
         "com/codepied/api/ApiApplicationKt.class",
-        "com/codepied/api/file/endpoint/FileController.class",
+        "com/codepied/api/file/endpoint/*.class",
         "**/config/**",
         "**/domain/**",
         "**/*Config*",

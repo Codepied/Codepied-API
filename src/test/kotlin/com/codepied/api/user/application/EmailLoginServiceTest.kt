@@ -68,7 +68,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         val user = UserFactory.createUser(listOf(RoleType.USER), ActivateStatus.NOT_AUTHORIZED_BY_EMAIL)
         doReturn(user)
             .`when`(userRepository).save(any())
-        val userDetails = UserDetailsFactory.create(request.nickname, user)
+        val userDetails = UserDetailsFactory.create(request.nickname, user, null)
         doReturn(userDetails).`when`(userDetailsRepository).save(any())
         val auth = EmailSignupAuthorizationRequestFactory.create(user)
         doReturn(auth).`when`(emailSignupAuthorizationRequestRepository).save(any())
