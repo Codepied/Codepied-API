@@ -121,4 +121,37 @@ internal class UserIntegrationServiceTest : AbstractServiceTest() {
         val exception = throwable as InvalidRequestException
         assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.INTEGRATION_SQL_FAIL)
     }
+
+    @Test
+    fun `소셜 어카운트 목록조회`() {
+        // * given
+        val socialAccounts = listOf(
+            SocialUserIdentificationFactory.create(
+                socialIdentification = "1",
+                socialType = SocialType.GOOGLE,
+                user = Mockito.mock(User::class.java),
+                email = "test@gmail.com"
+            ),
+            SocialUserIdentificationFactory.create(
+                socialIdentification = "2",
+                socialType = SocialType.KAKAO,
+                user = Mockito.mock(User::class.java),
+                email = "test@kakao.com"
+            ),
+            SocialUserIdentificationFactory.create(
+                socialIdentification = "2",
+                socialType = SocialType.EMAIL,
+                user = Mockito.mock(User::class.java),
+                email = "test@yahoo.jp"
+            ),
+        )
+        doReturn(socialAccounts).`when`(socialUserIdentificationRepository).findAllByUserId(anyLong())
+
+        // * when
+        val result = service.retrieveIntegrationInfo()
+
+        // * then
+        assertThat(result.map { it.first }.toSet()).isEqualTo(socialAccounts.map { it.socialType }.toSet())
+        assertThat(result.map { it.second }.toSet()).isEqualTo(socialAccounts.map { it.email }.toSet())
+    }
 }

@@ -1,16 +1,19 @@
 package com.codepied.api.user.endpoint
 
+import com.codepied.api.api.security.SocialType
 import com.codepied.api.test.DocumentEnum
 import com.codepied.api.test.RestDocStore
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.doReturn
 import org.springframework.http.MediaType
 import org.springframework.restdocs.headers.HeaderDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -48,6 +51,37 @@ internal class UserIntegrationControllerTest : AbstractUserEndpointTest("/api/us
                 ),
                 RestDocStore.responseSnippet(
                     fieldWithPath("data").type("Boolean").description("success!!"),
+                )
+            ))
+    }
+
+    @Test
+    fun `연동된 소셜 유저 조회`() {
+        // * given
+        val socialTypes = listOf(
+            SocialType.KAKAO to "test@kakao.com",
+            SocialType.GOOGLE to "test@gmail.com",
+        )
+        doReturn(socialTypes).`when`(userIntegrationService).retrieveIntegrationInfo()
+
+        // * when
+        val perform = mockMvc.perform(
+            get(uri)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer $accessToken")
+        )
+
+        // * then
+        perform.andExpect(status().is2xxSuccessful)
+            .andDo(document(
+                DocumentEnum.RETRIEVE_USER_INTEGRATIONS.name,
+                HeaderDocumentation.requestHeaders(
+                    HeaderDocumentation.headerWithName("Authorization").description("Bearer \${accessToken}"),
+                ),
+                RestDocStore.responseSnippet(
+                    fieldWithPath("data").type("List<Pair<SocialType, String?>>").description("success!!"),
+                    fieldWithPath("data[].first").type("SocialType").description("social type"),
+                    fieldWithPath("data[].second").type("String?").description("email"),
                 )
             ))
     }

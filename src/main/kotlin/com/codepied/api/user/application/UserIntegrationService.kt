@@ -46,4 +46,12 @@ class UserIntegrationService(
             }
         }
     }
+
+    fun retrieveIntegrationInfo(): List<Pair<SocialType, String?>> {
+        return socialUserIdentificationRepository
+            .findAllByUserId(requestContext.userKey)
+            .filter { !it.audit.deleted }
+            .associateBy { it.socialType }
+            .entries.map { it.key to it.value.email }
+    }
 }

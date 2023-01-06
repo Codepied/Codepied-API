@@ -58,4 +58,6 @@ interface SocialUserIdentificationRepository : JpaRepository<SocialUserIdentific
     fun getBySocialTypeAndSocialIdentification(socialType: SocialType, socialIdentification: String): SocialUserIdentification {
         return this.findBySocialTypeAndSocialIdentification(socialType, socialIdentification) ?: throwNoSuchUser()
     }
+
+    fun findAllByUserId(userId: Long): List<SocialUserIdentification>
 }

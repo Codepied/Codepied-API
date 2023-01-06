@@ -116,3 +116,16 @@ include::{snippets}/USER_INTEGRATION/request-body.adoc[]
 include::{snippets}/USER_INTEGRATION/response-fields.adoc[]
 include::{snippets}/USER_INTEGRATION/http-response.adoc[]
 // -------------------------------
+
+== Retrieve User Integration List
+
+=== Raw Request
+include::{snippets}/RETRIEVE_USER_INTEGRATIONS/http-request.adoc[]
+
+=== Request Headers
+include::{snippets}/RETRIEVE_USER_INTEGRATIONS/request-headers.adoc[]
+
+=== Response
+include::{snippets}/RETRIEVE_USER_INTEGRATIONS/response-fields.adoc[]
+include::{snippets}/RETRIEVE_USER_INTEGRATIONS/http-response.adoc[]
+// -------------------------------
