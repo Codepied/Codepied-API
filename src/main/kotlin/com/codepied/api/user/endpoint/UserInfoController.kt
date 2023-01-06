@@ -56,4 +56,14 @@ class UserInfoController(
 
         return SuccessResponse(true)
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping(params=["type=PROFILE"])
+    fun changeProfileImage(
+        @RequestParam fileId: String?,
+    ) : SuccessResponse<Boolean> {
+        service.changeProfileImage(fileId)
+
+        return SuccessResponse(true)
+    }
 }

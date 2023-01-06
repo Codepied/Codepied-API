@@ -61,6 +61,7 @@ CREATE TABLE MST_USER_DETAILS(
     NICKNAME                VARCHAR(128)        NOT NULL,
     STR_ID                  UUID                NOT NULL,
     USER_KEY                BIGINT              NOT NULL,
+    PROFILE                 VARCHAR(512),
 
     DELETED                 BOOLEAN             NOT NULL,
     CREATED_BY              BIGINT,

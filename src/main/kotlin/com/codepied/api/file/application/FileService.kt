@@ -27,7 +27,7 @@ class FileService(
     private val fileRepository: CodepiedFileRepository
 ) {
     @Transactional
-    fun createPublicFile(request: FileCreate) {
+    fun createPublicFile(request: FileCreate): String {
         if (request.file.size > 3_000_000) {
             throwInvalidRequest(
                 errorCode = BusinessErrorCode.EXCEED_FILE_SIZE,
@@ -35,7 +35,7 @@ class FileService(
             )
         }
 
-        try {
+        return try {
             TempFile.from(multipartFile = request.file).use { file ->
                 val serverProfile = ServerProfile.matches(env.serverProfile)
                 val fileEntity = CodepiedFileFactory.create(
@@ -47,6 +47,8 @@ class FileService(
                 uploader.upload(fileEntity.fileId, file.path.toFile())
 
                 fileRepository.save(fileEntity)
+
+                fileEntity.fileId
             }
         } catch (e: Exception) {
             throwInvalidRequest(

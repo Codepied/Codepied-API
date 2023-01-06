@@ -1,6 +1,8 @@
 package com.codepied.api.user.application
 
+import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidPassword
+import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwNoSuchUser
 import com.codepied.api.api.http.RequestContext
 import com.codepied.api.user.domain.SocialUserIdentificationRepository
@@ -60,10 +62,26 @@ class UserInfoService(
         userCredential.password = passwordEncoder.encode(newPassword)
     }
 
-    fun  changeNickname(nickname: String) {
-        userDetailsRepository.findByUserId(requestContext.userKey)?.apply {
-            this.nickname = nickname
-        } ?: throwNoSuchUser()
+    fun changeNickname(nickname: String) {
+        when(this.checkDuplicatedUserInfo(nickname, UserDataDuplicateType.NICKNAME)) {
+            true -> throwInvalidRequest(
+                errorCode = BusinessErrorCode.DUPLICATED_NICKNAME,
+                debugMessage = "duplicated nickname"
+            )
+
+            false -> userDetailsRepository.findByUserId(requestContext.userKey)?.apply {
+                this.nickname = nickname
+            } ?: throwNoSuchUser()
+        }
+    }
+
+    fun changeProfileImage(fileId: String?) {
+        userDetailsRepository.getByUserId(requestContext.userKey).apply {
+            this.profileFileId = when(fileId.isNullOrBlank()) {
+                true -> null
+                false -> fileId
+            }
+        }
     }
 
     private fun checkDuplicatedEmail(email: String) = socialUserIdentificationRepository.existsByEmail(email)
