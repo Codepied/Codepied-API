@@ -6,6 +6,7 @@ import com.codepied.api.api.http.RequestContext
 import com.codepied.api.api.locale.LocaleChangeFilter
 import com.codepied.api.api.security.JwtAuthFilter
 import com.codepied.api.api.security.application.EmailLoginService
+import com.codepied.api.api.security.application.JwtService
 import com.codepied.api.api.security.application.SocialLoginService
 import com.codepied.api.user.application.UserInfoService
 import com.codepied.api.user.application.UserIntegrationService
@@ -68,6 +69,8 @@ abstract class AbstractUserEndpointTest(val uri: String) {
     protected lateinit var emailLoginService: EmailLoginService
     @MockBean
     protected lateinit var userIntegrationService: UserIntegrationService
+    @MockBean
+    protected lateinit var jwtService: JwtService
 
     @Autowired
     private lateinit var webApplicationContext: WebApplicationContext

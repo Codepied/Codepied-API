@@ -31,11 +31,12 @@ internal class UserIntegrationControllerTest : AbstractUserEndpointTest("/api/us
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer $accessToken")
-                .content(
-                    """{
-                    "email": "test@gmail.com",
-                    "password" : "testpassword1234"
-                }""".trimIndent()))
+                .content("""
+                    {
+                        "email": "test@gmail.com",
+                        "password" : "testpassword1234"
+                    }
+                """.trimIndent()))
 
         // * then
         perform.andExpect(status().is2xxSuccessful)
@@ -66,11 +67,12 @@ internal class UserIntegrationControllerTest : AbstractUserEndpointTest("/api/us
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer $accessToken")
-                .content(
-                """{
-                    "socialType": "KAKAO",
-                    "authorizationCode" : "fjoefiasd,mzfsafaweasdf.asdfkl"
-                }""".trimIndent()))
+                .content("""
+                    {
+                        "socialType": "KAKAO",
+                        "authorizationCode" : "fjoefiasd,mzfsafaweasdf.asdfkl"
+                    }
+                """.trimIndent()))
 
         // * then
         perform.andExpect(status().is2xxSuccessful)

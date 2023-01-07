@@ -37,7 +37,7 @@ class SocialLoginServiceImpl(
         return LoginInfoImpl(
             userKey = user.id,
             accessToken = jwtService.generateAccessToken(user, socialType),
-            refreshToken = jwtService.generateRefreshToken(user),
+            refreshToken = jwtService.generateRefreshToken(user, socialType),
             nickname = userDetails.nickname,
             userProfile = null,
             email = socialAccount.email(),
@@ -66,7 +66,7 @@ class SocialLoginServiceImpl(
             LoginInfoImpl(
                 userKey = user.id,
                 accessToken = jwtService.generateAccessToken(user, socialType),
-                refreshToken = jwtService.generateRefreshToken(user),
+                refreshToken = jwtService.generateRefreshToken(user, socialType),
                 nickname = userDetails.nickname,
                 userProfile = null,
                 email = socialIdentification.email,

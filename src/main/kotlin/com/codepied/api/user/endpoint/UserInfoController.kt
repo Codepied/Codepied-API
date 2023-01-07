@@ -1,6 +1,7 @@
 package com.codepied.api.user.endpoint
 
 import com.codepied.api.api.http.SuccessResponse
+import com.codepied.api.file.dto.FileIdRequest
 import com.codepied.api.user.application.UserInfoService
 import com.codepied.api.user.dto.ChangeEmailUserPassword
 import com.codepied.api.user.dto.ChangeNickname
@@ -60,9 +61,9 @@ class UserInfoController(
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping(params=["type=PROFILE"])
     fun changeProfileImage(
-        @RequestParam fileId: String?,
+        @RequestBody request: FileIdRequest,
     ) : SuccessResponse<Boolean> {
-        service.changeProfileImage(fileId)
+        service.changeProfileImage(request.fileId)
 
         return SuccessResponse(true)
     }
