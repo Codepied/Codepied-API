@@ -20,6 +20,7 @@ class UserIntegrationNativeQueryRepository(
         changeSocialAccount(fromUserKey, toUserKey)
         changeUserLoginLog(fromUserKey, toUserKey)
         changeFileCreator(fromUserKey, toUserKey)
+        changeUserCredential(fromUserKey, toUserKey)
     }
 
     private fun changeSocialAccount(fromUserKey: Long, toUserKey: Long) {
@@ -51,6 +52,12 @@ class UserIntegrationNativeQueryRepository(
             WHERE 1 = 1
                 AND CREATED_BY = :fromUserKey
         """.trimIndent()
+
+        executeUpdate(em.createNativeQuery(sql), fromUserKey, toUserKey)
+    }
+
+    private fun changeUserCredential(fromUserKey: Long, toUserKey: Long) {
+        val sql = "UPDATE MST_USER_CREDENTIAL $predicate"
 
         executeUpdate(em.createNativeQuery(sql), fromUserKey, toUserKey)
     }
