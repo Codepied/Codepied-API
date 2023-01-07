@@ -6,6 +6,7 @@ import com.codepied.api.api.security.dto.LoginInfoImpl
 import com.codepied.api.test.DocumentEnum
 import com.codepied.api.test.RestDocStore
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.doReturn
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -37,12 +38,13 @@ class UserAuthControllerTest : AbstractUserEndpointTest("/api/users/auths") {
         val perform = mockMvc.perform(post("$uri/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content("""{
-                    "email": "test@test.com",
-                    "password": "password_test",
-                    "nickname": "test_nickname"
-                }""".trimIndent()
-                )
+                .content("""
+                    {
+                        "email": "test@test.com",
+                        "password": "password_test",
+                        "nickname": "test_nickname"
+                    }
+                """.trimIndent())
         )
 
         val test: List<FieldDescriptor> = listOf<FieldDescriptor>()
@@ -84,11 +86,12 @@ class UserAuthControllerTest : AbstractUserEndpointTest("/api/users/auths") {
             .param("type", "EMAIL")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(
-                """{
-                "email": "test@test.com",
-                "password": "password_test"
-            }""".trimIndent()))
+            .content("""
+                {
+                    "email": "test@test.com",
+                    "password": "password_test"
+                }
+            """.trimIndent()))
 
         // * then
         perform.andExpect(status().isOk)
@@ -149,5 +152,49 @@ class UserAuthControllerTest : AbstractUserEndpointTest("/api/users/auths") {
                     fieldWithPath("data.email").type("String").description("user email"),
                 ))
             )
+    }
+
+    @Test
+    fun `토큰 재발급 성공`() {
+        // * given
+        val loginInfo = LoginInfoImpl(
+            userKey = 1L,
+            accessToken = "access_token",
+            refreshToken = "refresh_token",
+            nickname = "nickname",
+            userProfile = "file_id",
+            email = "test@test.com",
+        )
+        org.mockito.kotlin.doReturn(loginInfo).`when`(jwtService).refreshTokens(ArgumentMatchers.anyString())
+
+        // * when
+        val perform = mockMvc.perform(
+            post("$uri/refresh")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "refresh": "fjoaiwejf.afoisedjfoawe.faoklwejfoiaw"
+                    }
+                """.trimIndent())
+        )
+
+        // * then
+        perform.andExpect(status().is2xxSuccessful)
+            .andDo(document(
+                DocumentEnum.REFRESH_TOKENS.name,
+                requestFields(
+                    fieldWithPath("refresh").type("String").description("refresh token")
+                ),
+                RestDocStore.responseSnippet(
+                    fieldWithPath("data").type("LoginInfo").description("login information"),
+                    fieldWithPath("data.userKey").type("Long").description("userKey"),
+                    fieldWithPath("data.accessToken").type("String").description("access JWT"),
+                    fieldWithPath("data.refreshToken").type("String").description("refresh JWT"),
+                    fieldWithPath("data.nickname").type("String").description("user nickname"),
+                    fieldWithPath("data.userProfile").type("String?").description("user profile").optional(),
+                    fieldWithPath("data.email").type("String").description("user email"),
+                )
+            ))
     }
 }

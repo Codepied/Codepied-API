@@ -75,10 +75,12 @@ class UserInfoControllerTest : AbstractUserEndpointTest("/api/users/info") {
                 .header("Authorization", "Bearer $accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content("""{
-                    "oldPassword": "$oldPassword",
-                    "newPassword": "$newPassword"
-                }""".trimIndent())
+                .content("""
+                    {
+                        "oldPassword": "$oldPassword",
+                        "newPassword": "$newPassword"
+                    }
+                """.trimIndent())
         )
 
         // * then
@@ -108,13 +110,15 @@ class UserInfoControllerTest : AbstractUserEndpointTest("/api/users/info") {
         // * when
         val perform = mockMvc.perform(
             patch(uri)
-                .header("Authorization", accessToken)
+                .header("Authorization", "Bearer $accessToken")
                 .param("type", "NICKNAME")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content("""{
+                .content("""
+                    {
                         "nickname": "nickname"
-                    }""".trimMargin()))
+                    }
+                """.trimMargin()))
 
         // * then
         perform.andExpect(status().is2xxSuccessful)
@@ -140,7 +144,7 @@ class UserInfoControllerTest : AbstractUserEndpointTest("/api/users/info") {
         val perform = mockMvc.perform(
             patch(uri)
                 .param("type", "NICKNAME")
-                .header("Authorization", accessToken)
+                .header("Authorization", "Bearer $accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content("""{
@@ -150,5 +154,41 @@ class UserInfoControllerTest : AbstractUserEndpointTest("/api/users/info") {
         // * then
         perform.andExpect(status().is4xxClientError)
             .andExpect(jsonPath("$.errorCode").value("INVALID_NICKNAME"))
+    }
+
+    @Test
+    fun `프로파일 이미지 변경 성공`() {
+        // * given
+        doNothing().`when`(userInfoService).changeNickname(anyString())
+
+        // * when
+        val perform = mockMvc.perform(
+            patch(uri)
+                .header("Authorization", "Bearer $accessToken")
+                .param("type", "PROFILE")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "fileId": "fileId"
+                    }
+                """.trimIndent()))
+
+        // * then
+        perform.andExpect(status().is2xxSuccessful)
+            .andExpect(jsonPath("$.data").value(true))
+            .andDo(
+                document(DocumentEnum.CHANGE_PROFILE.name,
+                    requestHeaders(
+                        headerWithName("Authorization").description("Bearer \${accessToken}"),
+                    ),
+                    requestParameters(parameterWithName("type").description("PROFILE (only)")),
+                    requestFields(
+                        fieldWithPath("fileId").type("String?").description("파일 아이디"),
+                    ),
+                    RestDocStore.responseSnippet(
+                        fieldWithPath("data").type("Boolean").description("요청이 잘못되지 않을 경우 반드시 true")
+                    )
+                ))
     }
 }

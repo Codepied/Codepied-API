@@ -45,6 +45,20 @@ include::{snippets}/SOCIAL_LOGIN/response-fields.adoc[]
 include::{snippets}/SOCIAL_LOGIN/http-response.adoc[]
 // -------------------------------
 
+== Refresh Tokens
+
+=== Raw Request
+include::{snippets}/REFRESH_TOKENS/http-request.adoc[]
+
+=== Request Body
+include::{snippets}/REFRESH_TOKENS/request-fields.adoc[]
+include::{snippets}/REFRESH_TOKENS/request-body.adoc[]
+
+=== Response
+include::{snippets}/REFRESH_TOKENS/response-fields.adoc[]
+include::{snippets}/REFRESH_TOKENS/http-response.adoc[]
+// -------------------------------
+
 == Check Duplicated User Info
 
 === Raw Request
@@ -99,6 +113,26 @@ include::{snippets}/NICKNAME_CHANGE/request-body.adoc[]
 include::{snippets}/NICKNAME_CHANGE/response-fields.adoc[]
 include::{snippets}/NICKNAME_CHANGE/http-response.adoc[]
 // -------------------------------
+
+== Change User Profile
+
+=== Raw Request
+include::{snippets}/CHANGE_PROFILE/http-request.adoc[]
+
+=== Request Headers
+include::{snippets}/CHANGE_PROFILE/request-headers.adoc[]
+
+=== Request Body
+include::{snippets}/CHANGE_PROFILE/request-fields.adoc[]
+include::{snippets}/CHANGE_PROFILE/request-body.adoc[]
+
+=== Response
+include::{snippets}/CHANGE_PROFILE/response-fields.adoc[]
+include::{snippets}/CHANGE_PROFILE/http-response.adoc[]
+// -------------------------------
+
+
+
 
 == User Integration
 

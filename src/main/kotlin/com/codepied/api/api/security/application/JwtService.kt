@@ -6,8 +6,9 @@ import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.exception.ServerExceptionBuilder.throwInternalServerError
 import com.codepied.api.api.security.SocialType
-import com.codepied.api.api.security.dto.PrincipalDetails
+import com.codepied.api.api.security.dto.*
 import com.codepied.api.user.domain.User
+import com.codepied.api.user.domain.UserDetailsRepository
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.*
@@ -25,6 +26,7 @@ class JwtService(
     private val jwtProperty: JwtProperty,
     private val timeService: TimeService,
     private val objectMapper: ObjectMapper,
+    private val userDetailsRepository: UserDetailsRepository,
 ) {
     fun generateAccessToken(user: User, socialType: SocialType): String {
         val principalDetails = PrincipalDetails.from(user, socialType)
@@ -39,12 +41,15 @@ class JwtService(
             .compact()
     }
 
-    fun generateRefreshToken(user: User): String {
+    fun generateRefreshToken(user: User, socialType: SocialType): String {
         val now = Date.from(timeService.now().toInstant())
         val expireTime = Date(now.time + jwtProperty.refreshTokenLifetime)
 
         return Jwts.builder()
-            .setSubject(user.id.toString())
+            .setSubject(objectMapper.writeValueAsString(RefreshTokenBody(
+                userKey = user.id,
+                socialType = socialType,
+            )))
             .setIssuedAt(Date.from(timeService.now().toInstant()))
             .setIssuedAt(now)
             .setExpiration(expireTime)
@@ -52,10 +57,55 @@ class JwtService(
             .compact()
     }
 
+    fun refreshTokens(refreshToken: String): LoginInfo {
+        val tokenBody = parseRefreshToken(refreshToken)
+        val userDetails = userDetailsRepository.getByUserId(tokenBody.userKey)
+        val user = userDetails.user
+
+        return LoginInfoImpl(
+            userKey = user.id,
+            accessToken = this.generateAccessToken(user, tokenBody.socialType),
+            refreshToken = this.generateRefreshToken(user, tokenBody.socialType),
+            nickname = userDetails.nickname,
+            userProfile = userDetails.profileFileId,
+            email = user.socialIdentifications[0].email,
+        )
+    }
+
     fun parseAccessToken(jwt: String): PrincipalDetails = objectMapper.readValue(
         claimsOfAccessToken(jwt).subject,
         object : TypeReference<PrincipalDetails>() {}
     )
+
+    fun parseRefreshToken(jwt: String): RefreshTokenBody = objectMapper.readValue(
+        claimsOfRefreshToken(jwt).subject,
+        object: TypeReference<RefreshTokenBody>() {},
+    )
+
+    private fun claimsOfRefreshToken(jwt: String): Claims {
+        return try {
+            Jwts.parser()
+                .setSigningKey(jwtProperty.refreshTokenSecret.toByteArray(Charsets.UTF_8))
+                .parseClaimsJws(jwt)
+                .body
+        } catch (e: ExpiredJwtException) {
+            throwInvalidRequest(
+                errorCode = BusinessErrorCode.ACCESS_TOKEN_EXPIRED,
+                debugMessage = "refresh token expired",
+            )
+        } catch (e: Exception) {
+            when(e) {
+                is UnsupportedJwtException, is MalformedJwtException -> {
+                    throwInvalidRequest(
+                        errorCode = BusinessErrorCode.INVALID_ACCESS_TOKEN,
+                        debugMessage = "Invalid refresh token was used ",
+                    )
+                }
+
+                else -> throwInternalServerError(debugMessage = "unknown error then parsing access token")
+            }
+        }
+    }
 
     private fun claimsOfAccessToken(jwt: String): Claims {
         try {

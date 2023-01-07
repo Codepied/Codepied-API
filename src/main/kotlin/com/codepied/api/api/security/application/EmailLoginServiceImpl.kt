@@ -71,7 +71,7 @@ class EmailLoginServiceImpl(
         return EmailLoginInfoImpl(
             userKey = userInfo.first.user.id,
             accessToken = jwtService.generateAccessToken(userInfo.first.user, SocialType.EMAIL),
-            refreshToken = jwtService.generateRefreshToken(userInfo.first.user),
+            refreshToken = jwtService.generateRefreshToken(userInfo.first.user, SocialType.EMAIL),
             nickname = userInfo.first.nickname,
             userProfile = null,
             email = request.email,
