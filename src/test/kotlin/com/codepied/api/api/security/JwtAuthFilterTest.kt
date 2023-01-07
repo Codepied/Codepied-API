@@ -50,7 +50,8 @@ class JwtAuthFilterTest : AbstractServiceTest() {
         doReturn("Bearer $accessToken").`when`(request).getHeader(eq("Authorization"))
         val principalDetails = PrincipalDetails(
             userKey = 1L,
-            roleTypes = listOf(RoleType.USER)
+            roleTypes = listOf(RoleType.USER),
+            socialType = SocialType.EMAIL,
         )
         doReturn(principalDetails).`when`(jwtService).parseAccessToken(eq(accessToken))
         doNothing().`when`(filterChain).doFilter(eq(request), eq(response))

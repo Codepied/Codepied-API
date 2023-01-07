@@ -10,55 +10,62 @@ class UserIntegrationNativeQueryRepository(
 ) {
     private val predicate = """
             SET
-                USER_KEY = :userKey
+                USER_KEY = :toUserKey
             WHERE 1 = 1
-                AND USER_KEY = :socialUserKey
+                AND USER_KEY = :fromUserKey
         """.trimIndent()
 
-    fun integration(socialUserKey: Long, userKey: Long) {
-        changeUserRoles(socialUserKey, userKey)
-        changeSocialAccount(socialUserKey, userKey)
-        changeUserLoginLog(socialUserKey, userKey)
-        changeFileCreator(socialUserKey, userKey)
+    fun integration(fromUserKey: Long, toUserKey: Long) {
+        changeUserRoles(fromUserKey, toUserKey)
+        changeSocialAccount(fromUserKey, toUserKey)
+        changeUserLoginLog(fromUserKey, toUserKey)
+        changeFileCreator(fromUserKey, toUserKey)
+        changeUserCredential(fromUserKey, toUserKey)
     }
 
-    private fun changeSocialAccount(socialUserKey: Long, userKey: Long) {
+    private fun changeSocialAccount(fromUserKey: Long, toUserKey: Long) {
         val sql = "UPDATE SOCIAL_USER_IDENTI $predicate"
 
-        executeUpdate(em.createNativeQuery(sql), socialUserKey, userKey)
+        executeUpdate(em.createNativeQuery(sql), fromUserKey, toUserKey)
     }
 
-    private fun changeUserRoles(socialUserKey: Long, userKey: Long) {
+    private fun changeUserRoles(fromUserKey: Long, toUserKey: Long) {
         val sql = """
             UPDATE MST_USER_ROLE
             $predicate
                 AND ROLE_TYPE <> 'USER'
         """.trimIndent()
 
-        executeUpdate(em.createNativeQuery(sql), socialUserKey, userKey)
+        executeUpdate(em.createNativeQuery(sql), fromUserKey, toUserKey)
     }
 
-    private fun changeUserLoginLog(socialUserKey: Long, userKey: Long) {
+    private fun changeUserLoginLog(fromUserKey: Long, toUserKey: Long) {
         val sql = "UPDATE MST_USER_LOGIN_LOG $predicate"
 
-        executeUpdate(em.createNativeQuery(sql), socialUserKey, userKey)
+        executeUpdate(em.createNativeQuery(sql), fromUserKey, toUserKey)
     }
 
-    private fun changeFileCreator(socialUserKey: Long, userKey: Long) {
+    private fun changeFileCreator(fromUserKey: Long, toUserKey: Long) {
         val sql = """
             UPDATE CODEPIED_FILE
-            SET CREATED_BY = :userKey
+            SET CREATED_BY = :toUserKey
             WHERE 1 = 1
-                AND CREATED_BY = :socialUserKey
+                AND CREATED_BY = :fromUserKey
         """.trimIndent()
 
-        executeUpdate(em.createNativeQuery(sql), socialUserKey, userKey)
+        executeUpdate(em.createNativeQuery(sql), fromUserKey, toUserKey)
     }
 
-    private fun executeUpdate(nativeQuery: Query, socialUserKey: Long, userKey: Long) {
+    private fun changeUserCredential(fromUserKey: Long, toUserKey: Long) {
+        val sql = "UPDATE MST_USER_CREDENTIAL $predicate"
+
+        executeUpdate(em.createNativeQuery(sql), fromUserKey, toUserKey)
+    }
+
+    private fun executeUpdate(nativeQuery: Query, fromUserKey: Long, toUserKey: Long) {
         nativeQuery
-            .setParameter("socialUserKey", socialUserKey)
-            .setParameter("userKey", userKey)
+            .setParameter("fromUserKey", fromUserKey)
+            .setParameter("toUserKey", toUserKey)
             .executeUpdate()
     }
 }

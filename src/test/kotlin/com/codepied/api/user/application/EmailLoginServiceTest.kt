@@ -146,7 +146,7 @@ class EmailLoginServiceTest : AbstractServiceTest() {
         doReturn(ActivateStatus.ACTIVATED).`when`(user).activateStatus
         doReturn(1L).`when`(user).id
         doReturn(true).`when`(passwordEncoder).matches(anyString(), anyString())
-        doReturn("access_token").`when`(jwtService).generateAccessToken(any())
+        doReturn("access_token").`when`(jwtService).generateAccessToken(any(), any())
         doReturn("refresh_token").`when`(jwtService).generateRefreshToken(any())
         lenient().doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
 

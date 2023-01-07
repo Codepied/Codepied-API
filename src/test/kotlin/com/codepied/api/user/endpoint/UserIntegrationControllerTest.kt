@@ -13,17 +13,52 @@ import org.springframework.restdocs.headers.HeaderDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 
 internal class UserIntegrationControllerTest : AbstractUserEndpointTest("/api/users/integration") {
+
     @Test
-    fun `유저 통합 성공`() {
+    fun `유저 통합 성공 (EMAIl TO SOCIAL)`() {
         // * given
-        doNothing().`when`(userIntegrationService).integration(any(), anyString())
+        doNothing().`when`(userIntegrationService).integrationEmailToSocial(any())
+
+        // * when
+        val perform = mockMvc.perform(
+            patch(uri)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer $accessToken")
+                .content(
+                    """{
+                    "email": "test@gmail.com",
+                    "password" : "testpassword1234"
+                }""".trimIndent()))
+
+        // * then
+        perform.andExpect(status().is2xxSuccessful)
+            .andExpect(jsonPath("$.data").value(true))
+            .andDo(document(
+                DocumentEnum.EMAIL_USER_INTEGRATION.name,
+                HeaderDocumentation.requestHeaders(
+                    HeaderDocumentation.headerWithName("Authorization").description("Bearer \${accessToken}"),
+                ),
+                PayloadDocumentation.requestFields(
+                    fieldWithPath("email").type("email").description("email"),
+                    fieldWithPath("password").type("password").description("password")
+                ),
+                RestDocStore.responseSnippet(
+                    fieldWithPath("data").type("Boolean").description("success!!"),
+                )
+            ))
+    }
+
+    @Test
+    fun `유저 통합 성공 (SOCIAL TO SOCIAL, EMAIL)`() {
+        // * given
+        doNothing().`when`(userIntegrationService).integrationSocialToAny(any(), anyString())
 
         // * when
         val perform = mockMvc.perform(

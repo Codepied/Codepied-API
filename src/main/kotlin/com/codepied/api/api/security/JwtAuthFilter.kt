@@ -33,6 +33,7 @@ class JwtAuthFilter(
             val accessToken = request.getHeader("Authorization").replace("Bearer ", "")
             val principalDetails = jwtService.parseAccessToken(accessToken).also {
                 requestContext.roleTypes = it.roleTypes
+                requestContext.socialType = it.socialType
                 requestContext.userKey = it.userKey
                 requestContext.validUser = true
             }

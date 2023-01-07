@@ -55,6 +55,11 @@ interface SocialUserIdentificationRepository : JpaRepository<SocialUserIdentific
     fun findBySocialTypeAndSocialIdentification(socialType: SocialType, socialIdentification: String): SocialUserIdentification?
     fun existsByEmail(email: String): Boolean
 
+    fun findByUserAndSocialType(user: User, socialType: SocialType): SocialUserIdentification?
+    fun getByUserAndSocialType(user: User, socialType: SocialType): SocialUserIdentification {
+        return this.findByUserAndSocialType(user, socialType) ?: throwNoSuchUser()
+    }
+
     fun getBySocialTypeAndSocialIdentification(socialType: SocialType, socialIdentification: String): SocialUserIdentification {
         return this.findBySocialTypeAndSocialIdentification(socialType, socialIdentification) ?: throwNoSuchUser()
     }
