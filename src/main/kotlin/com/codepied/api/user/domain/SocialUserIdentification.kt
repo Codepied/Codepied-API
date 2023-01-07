@@ -29,7 +29,7 @@ class SocialUserIdentification(
     @Column(name = "SOCIAL_TYPE", updatable = false, nullable = false)
     val socialType: SocialType,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_KEY", updatable = false, nullable = false)
     val user: User,
 
