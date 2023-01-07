@@ -1,6 +1,7 @@
 package com.codepied.api.api.security.dto
 
 import com.codepied.api.api.role.RoleType
+import com.codepied.api.api.security.SocialType
 import com.codepied.api.user.domain.User
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.security.core.Authentication
@@ -15,13 +16,15 @@ import org.springframework.security.core.userdetails.UserDetails
  */
 data class PrincipalDetails(
     val userKey: Long,
+    val socialType: SocialType,
     val roleTypes: List<RoleType>,
 ) : UserDetails {
     companion object {
-        fun from(user: User): PrincipalDetails = user.let {
+        fun from(user: User, socialType: SocialType): PrincipalDetails = user.let {
             PrincipalDetails(
                 userKey = it.id,
                 roleTypes = it.roles.map { entity -> entity.roleType },
+                socialType = socialType,
             )
         }
     }

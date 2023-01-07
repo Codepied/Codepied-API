@@ -3,6 +3,7 @@ package com.codepied.api.api.security.application
 import com.codepied.api.api.ObjectMapperHolder
 import com.codepied.api.api.TimeService
 import com.codepied.api.api.config.JwtProperty
+import com.codepied.api.api.security.SocialType
 import com.codepied.api.test.AbstractServiceTest
 import com.codepied.api.test.MockStore
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -35,7 +36,7 @@ class JwtServiceTest : AbstractServiceTest() {
         val user = MockStore.createOneUser()
 
         // * when
-        val token = service.generateAccessToken(user)
+        val token = service.generateAccessToken(user, SocialType.EMAIL)
 
         // * then
         assertThat(token.isNotBlank()).isTrue
@@ -57,7 +58,7 @@ class JwtServiceTest : AbstractServiceTest() {
     fun `access token 파싱성공`() {
         // * given
         val user = MockStore.createOneUser()
-        val accessToken = service.generateAccessToken(user)
+        val accessToken = service.generateAccessToken(user, SocialType.EMAIL)
 
         // * when
         val principalDetails = service.parseAccessToken(accessToken)

@@ -1,6 +1,7 @@
 package com.codepied.api.api.domain
 
 import com.codepied.api.api.role.RoleType
+import com.codepied.api.api.security.SocialType
 import com.codepied.api.api.security.dto.CustomAuthentication
 import com.codepied.api.api.security.dto.PrincipalDetails
 import com.codepied.api.test.AbstractServiceTest
@@ -19,7 +20,8 @@ class CustomAuditAwareTest : AbstractServiceTest() {
         val authentication = CustomAuthentication(
             principal = PrincipalDetails(
                 userKey = 1L,
-                roleTypes = listOf(RoleType.USER)
+                roleTypes = listOf(RoleType.USER),
+                socialType = SocialType.EMAIL,
             ),
             authenticated = true
         )

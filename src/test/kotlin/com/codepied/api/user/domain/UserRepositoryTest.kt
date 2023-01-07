@@ -1,6 +1,7 @@
 package com.codepied.api.user.domain
 
 import com.codepied.api.api.role.RoleType
+import com.codepied.api.api.security.SocialType
 import com.codepied.api.api.security.dto.PrincipalDetails
 import com.codepied.api.test.MockStore.createOneUser
 import org.assertj.core.api.Assertions
@@ -30,7 +31,7 @@ class UserRepositoryTest {
         Assertions.assertThat(user.audit.createdBy).isNull()
         em.clear()
 
-        val principalDetails = PrincipalDetails(user.id, roleTypes = listOf(RoleType.USER))
+        val principalDetails = PrincipalDetails(user.id, roleTypes = listOf(RoleType.USER), socialType = SocialType.EMAIL)
         SecurityContextHolder.getContext().authentication = principalDetails.createAuthentication()
 
         val findUser = repository.findByIdOrNull(user.id) ?: throw Exception()

@@ -6,10 +6,13 @@ import com.codepied.api.api.externalApi.SocialLoginApiService
 import com.codepied.api.api.externalApi.dto.SocialAccountImpl
 import com.codepied.api.api.http.RequestContext
 import com.codepied.api.api.security.SocialType
+import com.codepied.api.api.security.application.EmailLoginService
+import com.codepied.api.api.security.dto.LoginInfo
 import com.codepied.api.test.AbstractServiceTest
 import com.codepied.api.user.domain.SocialUserIdentificationFactory
 import com.codepied.api.user.domain.SocialUserIdentificationRepository
 import com.codepied.api.user.domain.User
+import com.codepied.api.user.dto.EmailUserLogin
 import com.codepied.api.user.persist.UserIntegrationNativeQueryRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
@@ -20,6 +23,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.lenient
 import org.mockito.kotlin.*
 
 internal class UserIntegrationServiceTest : AbstractServiceTest() {
@@ -28,20 +32,57 @@ internal class UserIntegrationServiceTest : AbstractServiceTest() {
     @Mock
     private lateinit var socialLoginApiService: SocialLoginApiService
     @Mock
+    private lateinit var emailLoginService: EmailLoginService
+    @Mock
     private lateinit var socialUserIdentificationRepository: SocialUserIdentificationRepository
     @Mock
     private lateinit var nativeQueryRepository: UserIntegrationNativeQueryRepository
+
 
     @InjectMocks
     private lateinit var service: UserIntegrationService
 
     @BeforeEach
     fun init() {
-        doReturn(1L).`when`(requestContext).userKey
+        lenient().doReturn(1L).`when`(requestContext).userKey
     }
 
     @Test
-    fun `유저 통합 성공 (이미 통합된 케이스)`() {
+    fun `유저 통합 실패(통합될 유저 계정이 소셜 유저가 아님, integrationEmailToSocial)`() {
+        // * given
+        val request = EmailUserLogin(
+            email = "test@test.io",
+            password = "testpassword"
+        )
+        doReturn(SocialType.EMAIL).`when`(requestContext).socialType
+
+        // * when
+        val throwable = catchThrowable { service.integrationEmailToSocial(request) }
+
+        // * then
+        assertThat(throwable is InvalidRequestException).isTrue
+        val exception = throwable as InvalidRequestException
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.UNKNOWN_ERROR)
+    }
+
+    @Test
+    fun `유저 통합 성공 (integrationEmailToSocial)`() {
+        // * given
+        val request = EmailUserLogin(
+            email = "test@test.io",
+            password = "testpassword"
+        )
+        doReturn(SocialType.KAKAO).`when`(requestContext).socialType
+        val loginInfo = Mockito.mock(LoginInfo::class.java)
+        doReturn(2L).`when`(loginInfo).getUserKey()
+        doReturn(loginInfo).`when`(emailLoginService).login(any())
+
+        // * when
+        service.integrationEmailToSocial(request)
+    }
+
+    @Test
+    fun `유저 통합 성공 (이미 통합된 케이스, integrationSocialToAny)`() {
         // * given
         val socialType = SocialType.KAKAO
         val authorizationCode = "ofijaiowef.foaiwsejfoa.asodfijaweo"
@@ -62,7 +103,7 @@ internal class UserIntegrationServiceTest : AbstractServiceTest() {
         doReturn(requestContext.userKey).`when`(user).id
 
         // * when
-        service.integration(socialType, authorizationCode)
+        service.integrationSocialToAny(socialType, authorizationCode)
     }
 
     @Test
@@ -88,11 +129,11 @@ internal class UserIntegrationServiceTest : AbstractServiceTest() {
         doNothing().`when`(nativeQueryRepository).integration(anyLong(), anyLong())
 
         // * when
-        service.integration(socialType, authorizationCode)
+        service.integrationSocialToAny(socialType, authorizationCode)
     }
 
     @Test
-    fun `유저 통합 실패 (알 수 없는 네티이브 쿼리 오류)`() {
+    fun `유저 통합 실패 (알 수 없는 네티이브 쿼리 오류, integrationSocialToAny)`() {
         // * given
         val socialType = SocialType.KAKAO
         val authorizationCode = "ofijaiowef.foaiwsejfoa.asodfijaweo"
@@ -114,7 +155,7 @@ internal class UserIntegrationServiceTest : AbstractServiceTest() {
         doThrow(RuntimeException()).`when`(nativeQueryRepository).integration(anyLong(), anyLong())
 
         // * when
-        val throwable = catchThrowable { service.integration(socialType, authorizationCode) }
+        val throwable = catchThrowable { service.integrationSocialToAny(socialType, authorizationCode) }
         
         // * then
         assertThat(throwable is InvalidRequestException).isTrue

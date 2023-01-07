@@ -55,7 +55,7 @@ class SocialLoginServiceImplTest : AbstractServiceTest() {
 
         val accessToken = "access token"
         val refreshToken = "refresh token"
-        doReturn(accessToken).`when`(jwtService).generateAccessToken(any())
+        doReturn(accessToken).`when`(jwtService).generateAccessToken(any(), any())
         doReturn(refreshToken).`when`(jwtService).generateRefreshToken(any())
 
         // * when
@@ -115,7 +115,7 @@ class SocialLoginServiceImplTest : AbstractServiceTest() {
 
         val accessToken = "access token"
         val refreshToken = "refresh token"
-        doReturn(accessToken).`when`(jwtService).generateAccessToken(any())
+        doReturn(accessToken).`when`(jwtService).generateAccessToken(any(), any())
         doReturn(refreshToken).`when`(jwtService).generateRefreshToken(any())
         doNothing().`when`(eventPublisher).publishEvent(any<LoginEvent>())
 

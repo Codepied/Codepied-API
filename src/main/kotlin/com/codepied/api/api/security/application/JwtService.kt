@@ -1,11 +1,11 @@
 package com.codepied.api.api.security.application
 
-import com.codepied.api.api.ObjectMapperHolder
 import com.codepied.api.api.TimeService
 import com.codepied.api.api.config.JwtProperty
 import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.exception.ServerExceptionBuilder.throwInternalServerError
+import com.codepied.api.api.security.SocialType
 import com.codepied.api.api.security.dto.PrincipalDetails
 import com.codepied.api.user.domain.User
 import com.fasterxml.jackson.core.type.TypeReference
@@ -26,8 +26,8 @@ class JwtService(
     private val timeService: TimeService,
     private val objectMapper: ObjectMapper,
 ) {
-    fun generateAccessToken(user: User): String {
-        val principalDetails = PrincipalDetails.from(user)
+    fun generateAccessToken(user: User, socialType: SocialType): String {
+        val principalDetails = PrincipalDetails.from(user, socialType)
         val now = Date.from(timeService.now().toInstant())
         val expireTime = Date(now.time + jwtProperty.accessTokenLifetime)
 
