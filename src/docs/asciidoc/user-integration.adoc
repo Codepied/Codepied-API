@@ -1,0 +1,50 @@
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== User Integration
+
+=== Raw Request
+include::{snippets}/USER_INTEGRATION/http-request.adoc[]
+
+=== Request Headers
+include::{snippets}/USER_INTEGRATION/request-headers.adoc[]
+
+=== Request Body
+include::{snippets}/USER_INTEGRATION/request-fields.adoc[]
+include::{snippets}/USER_INTEGRATION/request-body.adoc[]
+
+=== Response
+include::{snippets}/USER_INTEGRATION/response-fields.adoc[]
+include::{snippets}/USER_INTEGRATION/http-response.adoc[]
+// -------------------------------
+
+== Email User Integration
+
+=== Raw Request
+include::{snippets}/EMAIL_USER_INTEGRATION/http-request.adoc[]
+
+=== Request Headers
+include::{snippets}/EMAIL_USER_INTEGRATION/request-headers.adoc[]
+
+=== Request Body
+include::{snippets}/EMAIL_USER_INTEGRATION/request-fields.adoc[]
+include::{snippets}/EMAIL_USER_INTEGRATION/request-body.adoc[]
+
+=== Response
+include::{snippets}/EMAIL_USER_INTEGRATION/response-fields.adoc[]
+include::{snippets}/EMAIL_USER_INTEGRATION/http-response.adoc[]
+// -------------------------------
+
+== Retrieve User Integration List
+
+=== Raw Request
+include::{snippets}/RETRIEVE_USER_INTEGRATIONS/http-request.adoc[]
+
+=== Request Headers
+include::{snippets}/RETRIEVE_USER_INTEGRATIONS/request-headers.adoc[]
+
+=== Response
+include::{snippets}/RETRIEVE_USER_INTEGRATIONS/response-fields.adoc[]
+include::{snippets}/RETRIEVE_USER_INTEGRATIONS/http-response.adoc[]
+// -------------------------------
