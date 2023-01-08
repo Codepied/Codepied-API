@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
  * @since 2023/01/02
  */
 @Controller
-@RequestMapping("/api/files/public")
+@RequestMapping("/open-api/files")
 class FilePublicController(
     private val service: FileService
 ) {

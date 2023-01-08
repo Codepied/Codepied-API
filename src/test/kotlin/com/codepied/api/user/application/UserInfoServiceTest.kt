@@ -12,6 +12,7 @@ import com.codepied.api.user.domain.UserDetailsRepository
 import com.codepied.api.user.dto.UserDataDuplicateType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyLong
@@ -41,6 +42,11 @@ class UserInfoServiceTest : AbstractServiceTest() {
     @BeforeEach
     fun init() {
         lenient().doReturn(1L).`when`(requestContext).userKey
+    }
+
+    @AfterEach
+    fun clean() {
+        lenient().doReturn(-1L).`when`(requestContext).userKey
     }
 
     @Test

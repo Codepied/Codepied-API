@@ -1,8 +1,10 @@
 package com.codepied.api.file.application
 
 import com.codepied.api.api.config.RunnableEnvProperty
+import com.codepied.api.api.domain.Audit
 import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.CodepiedBaseException.InvalidRequestException
+import com.codepied.api.api.http.RequestContext
 import com.codepied.api.file.domain.CodepiedFile
 import com.codepied.api.file.domain.CodepiedFileRepository
 import com.codepied.api.file.dto.FileCreate
@@ -10,12 +12,15 @@ import com.codepied.api.test.AbstractServiceTest
 import org.apache.tika.Tika
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.lenient
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
@@ -36,9 +41,38 @@ internal class FileServiceTest : AbstractServiceTest() {
     private lateinit var downloader: FileDownloader
     @Mock
     private lateinit var fileRepository: CodepiedFileRepository
+    @Mock
+    private lateinit var requestContext: RequestContext
 
     @InjectMocks
     private lateinit var service: FileService
+
+    @BeforeEach
+    fun init() {
+        lenient().doReturn(1L).`when`(requestContext).userKey
+    }
+
+    @AfterEach
+    fun clean() {
+        lenient().doReturn(-1L).`when`(requestContext).userKey
+    }
+
+    @Test
+    fun `파일 조회 실패 - private and not valid user`() {
+        // * given
+        val file = Mockito.mock(CodepiedFile::class.java)
+        val audit = Audit().apply { this.createdBy = requestContext.userKey + 1L }
+        doReturn(file).`when`(fileRepository).getByFileIdAndPublicFile(anyString(), eq(false))
+        doReturn(audit).`when`(file).audit
+
+        // * when
+        val throwable = catchThrowable { service.retrievePrivateFileById("fjoaweifsd") }
+
+        // * then
+        assertThat(throwable is InvalidRequestException).isTrue
+        val exception = throwable as InvalidRequestException
+        assertThat(exception.errorCode).isEqualTo(BusinessErrorCode.NO_RESOURCE_ERROR)
+    }
 
     @Test
     fun `파일 생성 테스트 성공`() {

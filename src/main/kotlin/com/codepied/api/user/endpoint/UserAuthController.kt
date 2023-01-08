@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/api/users/auths")
+@RequestMapping("/open-api/users/auths")
 class UserAuthController(
     private val socialLoginService: SocialLoginService,
     private val emailLoginService: EmailLoginService,

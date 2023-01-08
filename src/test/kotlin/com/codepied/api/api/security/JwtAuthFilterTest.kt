@@ -48,6 +48,7 @@ class JwtAuthFilterTest : AbstractServiceTest() {
         val filterChain = Mockito.mock(FilterChain::class.java)
         val accessToken = "test.token.ok"
         doReturn("Bearer $accessToken").`when`(request).getHeader(eq("Authorization"))
+        doReturn("/api/test").`when`(request).requestURI
         val principalDetails = PrincipalDetails(
             userKey = 1L,
             roleTypes = listOf(RoleType.USER),
@@ -73,6 +74,7 @@ class JwtAuthFilterTest : AbstractServiceTest() {
         val filterChain = Mockito.mock(FilterChain::class.java)
         val accessToken = "test.token.invalid"
         doReturn("Bearer $accessToken").`when`(request).getHeader(eq("Authorization"))
+        doReturn("/api/test").`when`(request).requestURI
         doThrow(
             invalidRequest(
                 errorCode = BusinessErrorCode.ACCESS_TOKEN_EXPIRED,
