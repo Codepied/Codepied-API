@@ -5,15 +5,8 @@ import com.codepied.api.file.dto.FileIdRequest
 import com.codepied.api.user.application.UserInfoService
 import com.codepied.api.user.dto.ChangeEmailUserPassword
 import com.codepied.api.user.dto.ChangeNickname
-import com.codepied.api.user.dto.UserDataDuplicateType
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 /**
@@ -27,17 +20,6 @@ import javax.validation.Valid
 class UserInfoController(
     private val service: UserInfoService,
 ) {
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/duplicate")
-    fun checkDuplicatedEmail(
-        @RequestParam(required = true) data: String,
-        @RequestParam(required = true) type: String,
-    ) :SuccessResponse<Boolean> {
-        val duplicateType = UserDataDuplicateType.matches(type)
-
-        return SuccessResponse(data = service.checkDuplicatedUserInfo(data, duplicateType))
-    }
-
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping(params = ["type=PASSWORD"])
     fun changeEmailUserPassword(

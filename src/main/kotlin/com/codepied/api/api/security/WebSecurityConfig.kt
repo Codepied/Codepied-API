@@ -53,9 +53,7 @@ class WebSecurityConfig(
         httpSecurity.addFilterBefore(localeChangeFilter, JwtAuthFilter::class.java)
 
         httpSecurity.authorizeHttpRequests()
-            .antMatchers("/api/users/auths/**").permitAll()
-            .antMatchers("/api/users/info/duplicate").permitAll()
-            .antMatchers("/api/files/public").permitAll()
+            .antMatchers("/open-api/**").permitAll()
             .antMatchers("/**").authenticated()
             .antMatchers("/docs/**").hasRole(RoleType.PLATFORM_ADMIN.name)
             .antMatchers("/api/management/**").hasAnyRole(RoleType.MANAGER.name, RoleType.PLATFORM_ADMIN.name)

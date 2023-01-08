@@ -4,7 +4,6 @@ import com.codepied.api.api.exception.CodepiedBaseException
 import com.codepied.api.api.exception.ExceptionController
 import com.codepied.api.api.http.RequestContext
 import com.codepied.api.api.security.application.JwtService
-import com.codepied.api.api.security.dto.JwtAuthExcludeUrlPattern
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
@@ -26,8 +25,6 @@ class JwtAuthFilter(
     private val requestContext: RequestContext,
     private val objectMapper: ObjectMapper,
 ) : OncePerRequestFilter() {
-    private val excludeUrlPatterns: List<String> = JwtAuthExcludeUrlPattern.values().map { it.url }
-
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         try {
             val accessToken = request.getHeader("Authorization").replace("Bearer ", "")
@@ -49,6 +46,6 @@ class JwtAuthFilter(
     }
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
-        return request.requestURI in excludeUrlPatterns
+        return request.requestURI.split("/")[1] == "open-api"
     }
 }

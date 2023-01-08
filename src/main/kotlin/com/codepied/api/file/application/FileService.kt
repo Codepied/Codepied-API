@@ -5,6 +5,8 @@ import com.codepied.api.api.config.ServerProfile
 import com.codepied.api.api.exception.BusinessErrorCode
 import com.codepied.api.api.exception.InvalidRequestExceptionBuilder.throwInvalidRequest
 import com.codepied.api.api.file.TempFile
+import com.codepied.api.api.http.RequestContext
+import com.codepied.api.file.domain.CodepiedFile
 import com.codepied.api.file.domain.CodepiedFileFactory
 import com.codepied.api.file.domain.CodepiedFileRepository
 import com.codepied.api.file.dto.FileCreate
@@ -24,10 +26,23 @@ class FileService(
     private val env: RunnableEnvProperty,
     private val uploader: FileUploader,
     private val downloader: FileDownloader,
-    private val fileRepository: CodepiedFileRepository
+    private val fileRepository: CodepiedFileRepository,
+    private val requestContext: RequestContext,
 ) {
     @Transactional
-    fun createPublicFile(request: FileCreate): String {
+    fun createPublicFile(request: FileCreate): String = createFile(request, true)
+    @Transactional
+    fun createPrivateFile(request: FileCreate): String = createFile(request, false)
+
+    fun retrievePublicFileById(fileId: String): FileResponse = retrieveFileById(fileId, true)
+
+    fun retrievePublicFileByFileKey(fileKey: Long): FileResponse = retrieveFileByFileKey(fileKey, true)
+
+    fun retrievePrivateFileById(fileId: String): FileResponse = retrieveFileById(fileId, false)
+
+    fun retrievePrivateFileByFileKey(fileKey: Long): FileResponse = retrieveFileByFileKey(fileKey, false)
+
+    private fun createFile(request: FileCreate, publicFile: Boolean): String {
         if (request.file.size > 3_000_000) {
             throwInvalidRequest(
                 errorCode = BusinessErrorCode.EXCEED_FILE_SIZE,
@@ -42,7 +57,7 @@ class FileService(
                     mediaType = tika.detect(file.path.toFile()),
                     originalName = request.fileName,
                     serverProfile = serverProfile,
-                    isPublic = true,
+                    isPublic = publicFile,
                 )
                 uploader.upload(fileEntity.fileId, file.path.toFile())
 
@@ -58,9 +73,30 @@ class FileService(
         }
     }
 
-    fun retrievePublicFileById(fileId: String): FileResponse {
-        // * public 검증
-        val fileEntity = fileRepository.getByFileIdAndPublicFile(fileId = fileId, isPublicFile = true)
+    private fun retrieveFileByFileKey(fileKey: Long, publicFile: Boolean): FileResponse {
+        val fileEntity = fileRepository.getByIdAndPublicFile(id = fileKey, isPublicFile = publicFile)
+
+        checkInvalidExcess(publicFile, fileEntity)
+
+        // * retrieve file input stream
+        val inputStream = downloader.download(fileEntity.fileId)
+
+        return with(fileEntity) {
+            FileResponse(
+                inputStream = inputStream,
+                fileName = originalName,
+                mediaType = mediaType,
+            )
+        }
+    }
+
+    private fun retrieveFileById(fileId: String, publicFile: Boolean): FileResponse {
+        val fileEntity = fileRepository.getByFileIdAndPublicFile(
+            fileId = fileId,
+            isPublicFile = publicFile
+        )
+
+        checkInvalidExcess(publicFile, fileEntity)
 
         // * retrieve file input stream
         val inputStream = downloader.download(fileId)
@@ -74,17 +110,11 @@ class FileService(
         }
     }
 
-    fun retrievePublicFileByFileKey(fileKey: Long): FileResponse {
-        val fileEntity = fileRepository.getByIdAndPublicFile(id = fileKey, isPublicFile = true)
-
-        // * retrieve file input stream
-        val inputStream = downloader.download(fileEntity.fileId)
-
-        return with(fileEntity) {
-            FileResponse(
-                inputStream = inputStream,
-                fileName = originalName,
-                mediaType = mediaType,
+    private fun checkInvalidExcess(publicFile: Boolean, fileEntity: CodepiedFile) {
+        if (!publicFile && fileEntity.audit.createdBy != requestContext.userKey) {
+            throwInvalidRequest(
+                errorCode = BusinessErrorCode.NO_RESOURCE_ERROR,
+                debugMessage = "invalid access",
             )
         }
     }
