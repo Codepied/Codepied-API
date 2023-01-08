@@ -1,0 +1,75 @@
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== Check Duplicated User Info
+
+=== Raw Request
+include::{snippets}/USER_INFO_DUPLICATE/http-request.adoc[]
+
+=== Request Params
+include::{snippets}/USER_INFO_DUPLICATE/request-parameters.adoc[]
+=== Request Body
+include::{snippets}/USER_INFO_DUPLICATE/request-body.adoc[]
+
+=== Response
+include::{snippets}/USER_INFO_DUPLICATE/response-fields.adoc[]
+include::{snippets}/USER_INFO_DUPLICATE/http-response.adoc[]
+// -------------------------------
+
+== Change Email User's Password
+
+=== Raw Request
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/http-request.adoc[]
+
+=== Request Headers
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/request-headers.adoc[]
+
+=== Request Params
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/request-parameters.adoc[]
+
+=== Request Body
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/request-fields.adoc[]
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/request-body.adoc[]
+
+=== Response
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/response-fields.adoc[]
+include::{snippets}/EMAIL_USER_PASSWORD_CHANGE/http-response.adoc[]
+// -------------------------------
+
+== Change Nickname
+
+=== Raw Request
+include::{snippets}/NICKNAME_CHANGE/http-request.adoc[]
+
+=== Request Headers
+include::{snippets}/NICKNAME_CHANGE/request-headers.adoc[]
+
+=== Request Params
+include::{snippets}/NICKNAME_CHANGE/request-parameters.adoc[]
+
+=== Request Body
+include::{snippets}/NICKNAME_CHANGE/request-fields.adoc[]
+include::{snippets}/NICKNAME_CHANGE/request-body.adoc[]
+
+=== Response
+include::{snippets}/NICKNAME_CHANGE/response-fields.adoc[]
+include::{snippets}/NICKNAME_CHANGE/http-response.adoc[]
+// -------------------------------
+
+== Change User Profile
+
+=== Raw Request
+include::{snippets}/CHANGE_PROFILE/http-request.adoc[]
+
+=== Request Headers
+include::{snippets}/CHANGE_PROFILE/request-headers.adoc[]
+
+=== Request Body
+include::{snippets}/CHANGE_PROFILE/request-fields.adoc[]
+include::{snippets}/CHANGE_PROFILE/request-body.adoc[]
+
+=== Response
+include::{snippets}/CHANGE_PROFILE/response-fields.adoc[]
+include::{snippets}/CHANGE_PROFILE/http-response.adoc[]
+// -------------------------------

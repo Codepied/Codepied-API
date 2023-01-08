@@ -1,0 +1,60 @@
+:toc: left
+:toclevels: 2
+:source-highlighter: highlightjs
+
+// -------------------------------
+== Email User Signup
+
+=== Raw Request
+include::{snippets}/EMAIL_SIGNUP/http-request.adoc[]
+
+=== Request Body
+include::{snippets}/EMAIL_SIGNUP/request-fields.adoc[]
+include::{snippets}/EMAIL_SIGNUP/request-body.adoc[]
+
+=== Response
+include::{snippets}/EMAIL_SIGNUP/response-fields.adoc[]
+include::{snippets}/EMAIL_SIGNUP/http-response.adoc[]
+// -------------------------------
+
+== Email User Login
+
+=== Raw Request
+include::{snippets}/EMAIL_LOGIN/http-request.adoc[]
+
+=== Request Body
+include::{snippets}/EMAIL_LOGIN/request-fields.adoc[]
+include::{snippets}/EMAIL_LOGIN/request-body.adoc[]
+
+=== Response
+include::{snippets}/EMAIL_LOGIN/response-fields.adoc[]
+include::{snippets}/EMAIL_LOGIN/http-response.adoc[]
+// -------------------------------
+
+== Social User Login
+
+=== Raw Request
+include::{snippets}/SOCIAL_LOGIN/http-request.adoc[]
+
+=== Request Body
+include::{snippets}/SOCIAL_LOGIN/request-fields.adoc[]
+include::{snippets}/SOCIAL_LOGIN/request-body.adoc[]
+
+=== Response
+include::{snippets}/SOCIAL_LOGIN/response-fields.adoc[]
+include::{snippets}/SOCIAL_LOGIN/http-response.adoc[]
+// -------------------------------
+
+== Refresh Tokens
+
+=== Raw Request
+include::{snippets}/REFRESH_TOKENS/http-request.adoc[]
+
+=== Request Body
+include::{snippets}/REFRESH_TOKENS/request-fields.adoc[]
+include::{snippets}/REFRESH_TOKENS/request-body.adoc[]
+
+=== Response
+include::{snippets}/REFRESH_TOKENS/response-fields.adoc[]
+include::{snippets}/REFRESH_TOKENS/http-response.adoc[]
+// -------------------------------
