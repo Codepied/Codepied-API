@@ -45,6 +45,7 @@ import org.springframework.web.context.WebApplicationContext
 @WebMvcTest(
     value = [
         ExceptionController::class,
+        UserInfoOpenApiController::class,
         UserInfoController::class,
         UserAuthController::class,
         UserIntegrationController::class,

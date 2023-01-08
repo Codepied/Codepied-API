@@ -16,6 +16,7 @@ import com.codepied.api.user.dto.EmailUserLogin
 import com.codepied.api.user.persist.UserIntegrationNativeQueryRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyLong
@@ -45,6 +46,11 @@ internal class UserIntegrationServiceTest : AbstractServiceTest() {
     @BeforeEach
     fun init() {
         lenient().doReturn(1L).`when`(requestContext).userKey
+    }
+
+    @AfterEach
+    fun clean() {
+        lenient().doReturn(-1L).`when`(requestContext).userKey
     }
 
     @Test
