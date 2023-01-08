@@ -57,6 +57,7 @@ class WebSecurityConfig(
             .antMatchers("/api/users/info/duplicate").permitAll()
             .antMatchers("/api/files/public").permitAll()
             .antMatchers("/**").authenticated()
+            .antMatchers("/docs/**").hasRole(RoleType.PLATFORM_ADMIN.name)
             .antMatchers("/api/management/**").hasAnyRole(RoleType.MANAGER.name, RoleType.PLATFORM_ADMIN.name)
             .antMatchers("/api/admin/**").hasRole(RoleType.PLATFORM_ADMIN.name)
 
